@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# pkg enviornmental variable initialization
+
+PKG_TRACES_PATH=/usr/pkg/traces
+PKG_ARCHIVE_PATH=/usr/pkg/archive
+PKG_INSTALL_PATH=/
+PKG_EXTRACT_PATH=/tmp/pkg_extract
+
+export PKG_TRACES_PATH PKG_ARCHIVE_PATH PKG_INSTALL_PATH PKG_EXTRACT_PATH

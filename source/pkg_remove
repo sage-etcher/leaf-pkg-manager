@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# PKG_TRACES_PATH must be set
+. pkg_init
+if [[ -z "$PKG_TRACES_PATH" ]]; then
+	echo "ERROR: package enviornment variables are not set"
+	exit -1
+fi
+
+# uninstall a package using a .trace file
+# param #1 = package trace file
+
+trace_input_raw=$1
+trace_file=
+if [[ -e "$PKG_TRACES_PATH/$trace_input_raw.trace" ]]; then
+	trace_file=$PKG_TRACES_PATH/$trace_input_raw.trace
+elif [[ -e "$trace_input_raw" ]]; then
+	trace_file=$trace_input_raw
+else
+	echo "ERROR: no such file"
+	exit -1
+fi
+unset trace_input_raw
+
+
+# for each line in the trace file
+while read line; do
+	# if file, remove it
+	if [[ -f  $line ]]; then
+		rm -f $line
+	# if directory and is empty, remove it
+	elif [[ -d $line && ! "$(ls -A $line)" ]]; then
+		rmdir $line
+	# if a path was given, but the file/dir could not be found, send a warning
+	elif [[ $line != "" ]]; then
+		echo "WARNING: couldn't find file/directory: \"$line\""
+	fi
+done < $trace_file
+
+exit 0

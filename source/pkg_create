@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# PKG_TRACES_PATH & PKG_ARCHIVE_PATH must be set
+. pkg_init
+if [[ -z "$PKG_TRACES_PATH" || -z "$PKG_ARCHIVE_PATH" ]]; then
+	echo "ERROR: package enviornment variables are not set"
+	exit -1
+fi
+
+# create a package archive from a directory
+# param #1 = package name (& version)
+# param #2 = fakeroot directory (input)
+
+package_name=$1
+
+# if the package exists already, prompt for confirmation to overwrite
+if [[ -e "$PKG_ARCHIVE_PATH/$package_name.tar.xz" || -e "$PKG_TRACES_PATH/$package_name.trace" ]]; then
+	valid_input=0
+	confirmation=
+	while [[ $valid_input != 1 ]]; do
+		echo "WARNING: A package with the same name already exists, would you like to overwrite it?"
+		read -p "[y/n] " confirmation
+		if [[ "${confirmation,,}" == "y" || "${confirmation,,}" == "n" ]]; then
+			valid_input=1
+		fi
+	done
+
+	if [[ "${confirmation,,}" == "n" ]]; then
+		exit 0
+	fi
+
+	if [[ "${confirmation,,}" == "y" ]]; then
+		rm -f $PKG_ARCHIVE_PATH/$package_name.tar.xz
+		rm -f $PKG_TRACES_PATH/$package_name.trace
+	fi
+
+	unset confirmation valid_input
+fi
+
+
+fakeroot_dir=$2
+
+# check that the path exists
+if [[ ! -d "$fakeroot_dir" ]]; then
+	echo "ERROR: no directory"
+	exit -1
+fi
+
+# create the trace file
+touch $PKG_TRACES_PATH/$package_name.trace
+find $fakeroot_dir -type f >> $PKG_TRACES_PATH/$package_name.trace
+find $fakeroot_dir -type d >> $PKG_TRACES_PATH/$package_name.trace
+substitute_find="$(printf '%s' "$fakeroot_dir" | sed -e 's/[]\/$*.^[]/\\&/g')"
+substitute_replace="$(printf '%s' "$PKG_INSTALL_PATH" | sed -e 's/[]\/$*.^[]/\\&/g')"
+sed "s/$substitute_find/$substitute_replace/" -i $PKG_TRACES_PATH/$package_name.trace
+unset substitute_fine susbstitute_replace
+
+# create the archive file
+pushd $fakeroot_dir
+tar -cpf $PKG_ARCHIVE_PATH/$package_name.tar .
+xz -9 $PKG_ARCHIVE_PATH/$package_name.tar
+popd
+
+# done
+exit 0
+
