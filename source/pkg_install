@@ -22,10 +22,17 @@ else
 fi
 unset archive_file_raw
 
-
+# make sure the extract folder exists
 mkdir -p $PKG_EXTRACT_PATH
+# clean extract folder of any any previous bad files (in case of previous failure)
+if [[ "$(ls -A $PKG_EXTRACT_PATH)" ]]; then
+	rm -rf $PKG_EXTRACT_PATH/*
+fi
+# dump the package archive into the extract folder
 tar -xJpf $archive_file -C $PKG_EXTRACT_PATH
+# copy the package into it's installed destinations
 cp -Rpf $PKG_EXTRACT_PATH/* $PKG_INSTALL_PATH
-rm -rf $PKG_EXTRACT_PATH
+# clean the extract folder of files created during this run
+rm -rf $PKG_EXTRACT_PATH/*
 
 exit 0
