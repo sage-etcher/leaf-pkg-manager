@@ -20,7 +20,7 @@ if [[ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" && -e "$PKG_TRACES_PATH/$a
 #elif [[ -e "$archive_file_raw" ]]; then
 #	archive_file=$archive_file_raw
 else
-	echo "ERROR: no such file"
+	echo "ERROR: no such package"
 	exit -1
 fi
 unset archive_file_raw
@@ -50,7 +50,7 @@ while read line; do
 		continue
 	# create directory if it does not already exist
 	elif [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
-		mkdir -pv "$line"
+		mkdir -p "$line"
 	# if target path points to neither file nor directory but isnt empty, throw an error
 	elif [[ -z "$line" ]]
 		echo "WARNING: could not locate file/dir: $line"
