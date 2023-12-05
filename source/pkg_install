@@ -61,12 +61,12 @@ done < $trace_file
 # pass #2
 # move files
 while read line; do
-	# skip directories
-	if [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
-		continue
 	# move files from PKG_EXTRACT_PATH to PKG_INSTALL_PATH
-	elif [[ -f "$PKG_EXTRACT_PATH/$line" ]]; then
+	if [[ -f "$PKG_EXTRACT_PATH/$line" ]]; then
 		mv -fp "$PKG_EXTRACT_PATH/$line" "$PKG_INSTALL_PATH/$line"
+	# skip directories
+	elif [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
+		continue
 	# if target path points to neither file nor directory but isnt empty, throw an error
 	elif [[ -z "$line" ]]
 		echo "WARNING: could not locate file/dir: $line"
