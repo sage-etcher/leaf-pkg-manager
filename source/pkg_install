@@ -12,10 +12,13 @@ fi
 
 archive_file_raw=$1
 archive_file=
-if [[ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" ]]; then
+trace_file
+if [[ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" && -e "$PKG_TRACES_PATH/$archive_file_raw.trace ]]; then
 	archive_file=$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz
-elif [[ -e "$archive_file_raw" ]]; then
-	archive_file=$archive_file_raw
+	trace_file=$PKG_TRACES_PATH/$archive_file_raw.trace
+# doesnt work with experimental install
+#elif [[ -e "$archive_file_raw" ]]; then
+#	archive_file=$archive_file_raw
 else
 	echo "ERROR: no such file"
 	exit -1
@@ -31,8 +34,43 @@ fi
 # dump the package archive into the extract folder
 tar -xJpf $archive_file -C $PKG_EXTRACT_PATH
 # copy the package into it's installed destinations
-cp -Rpf $PKG_EXTRACT_PATH/* $PKG_INSTALL_PATH
+#cp -Rpf $PKG_EXTRACT_PATH/* $PKG_INSTALL_PATH
 # clean the extract folder of files created during this run
-rm -rf $PKG_EXTRACT_PATH/*
+#rm -rf $PKG_EXTRACT_PATH/*
 
-exit 0
+#exit 0
+
+# experiemental
+
+# pass #1
+# create needed directories
+while read line; do
+	# skip files
+	if [[ -f "$PKG_EXTRACT_PATH/$line" ]]; then
+		continue
+	# create directory if it does not already exist
+	elif [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
+		mkdir -pv "$line"
+	# if target path points to neither file nor directory but isnt empty, throw an error
+	elif [[ -z "$line" ]]
+		echo "WARNING: could not locate file/dir: $line"
+	fi
+
+done < $trace_file
+
+# pass #2
+# move files
+while read line; do
+	# skip directories
+	if [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
+		continue
+	# move files from PKG_EXTRACT_PATH to PKG_INSTALL_PATH
+	elif [[ -f "$PKG_EXTRACT_PATH/$line" ]]; then
+		mv -fp "$PKG_EXTRACT_PATH/$line" "$PKG_INSTALL_PATH/$line"
+	# if target path points to neither file nor directory but isnt empty, throw an error
+	elif [[ -z "$line" ]]
+		echo "WARNING: could not locate file/dir: $line"
+	fi
+done < $trace_file
+
+exit 0:
