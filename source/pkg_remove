@@ -29,8 +29,10 @@ while read line; do
 	if [[ -f  $line ]]; then
 		rm -f $line
 	# if directory and is empty, remove it
-	elif [[ -d $line && ! "$(ls -A $line)" ]]; then
-		rmdir $line
+	elif [[ -d $line ]]; then
+		if [[ ! "$(ls -A $line)" ]]; then
+			rmdir $line
+		fi
 	# if a path was given, but the file/dir could not be found, send a warning
 	elif [[ $line != "" ]]; then
 		echo "WARNING: couldn't find file/directory: \"$line\""
