@@ -13,7 +13,7 @@ fi
 archive_file_raw=$1
 archive_file=
 trace_file
-if [[ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" && -e "$PKG_TRACES_PATH/$archive_file_raw.trace ]]; then
+if [[ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" && -e "$PKG_TRACES_PATH/$archive_file_raw.trace" ]]; then
 	archive_file=$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz
 	trace_file=$PKG_TRACES_PATH/$archive_file_raw.trace
 # doesnt work with experimental install
