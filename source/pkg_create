@@ -49,7 +49,7 @@ fi
 # create the trace file
 touch $PKG_TRACES_PATH/$package_name.trace
 find $fakeroot_dir -type f >> $PKG_TRACES_PATH/$package_name.trace
-find $fakeroot_dir -type d >> $PKG_TRACES_PATH/$package_name.trace
+find $fakeroot_dir -type d | tac >> $PKG_TRACES_PATH/$package_name.trace
 substitute_find="$(printf '%s' "$fakeroot_dir" | sed -e 's/[]\/$*.^[]/\\&/g')"
 substitute_replace="$(printf '%s' "$PKG_INSTALL_PATH" | sed -e 's/[]\/$*.^[]/\\&/g')"
 sed "s/$substitute_find/$substitute_replace/" -i $PKG_TRACES_PATH/$package_name.trace
