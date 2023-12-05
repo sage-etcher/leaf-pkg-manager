@@ -16,9 +16,6 @@ trace_file
 if [[ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" && -e "$PKG_TRACES_PATH/$archive_file_raw.trace" ]]; then
 	archive_file=$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz
 	trace_file=$PKG_TRACES_PATH/$archive_file_raw.trace
-# doesnt work with experimental install
-#elif [[ -e "$archive_file_raw" ]]; then
-#	archive_file=$archive_file_raw
 else
 	echo "ERROR: no such package"
 	exit -1
@@ -33,47 +30,38 @@ if [[ "$(ls -A $PKG_EXTRACT_PATH)" ]]; then
 fi
 # dump the package archive into the extract folder
 tar -xJpf $archive_file -C $PKG_EXTRACT_PATH
-# copy the package into it's installed destinations
-#cp -Rpf $PKG_EXTRACT_PATH/* $PKG_INSTALL_PATH
-# clean the extract folder of files created during this run
-#rm -rf $PKG_EXTRACT_PATH/*
 
-#exit 0
-
-# experiemental
-
-# pass #1
-# create needed directories
+# move the package into its final location
+filepath=
 while read line; do
-	# skip files
+	# if path is to a file, make the parent directory and copy the file
 	if [[ -f "$PKG_EXTRACT_PATH/$line" ]]; then
-		continue
-	# create directory if it does not already exist
-	elif [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
-		mkdir -p "$PKG_INSTALL_PATH/$line"
-		# copy folder permissions as well
-		chown --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
-		chmod --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
-	# if target path points to neither file nor directory but isnt empty, throw an error
-	elif [[ -z "$line" ]]
-		echo "WARNING: could not locate file/dir: $line"
-	fi
-
-done < $trace_file
-
-# pass #2
-# move files
-while read line; do
-	# move files from PKG_EXTRACT_PATH to PKG_INSTALL_PATH
-	if [[ -f "$PKG_EXTRACT_PATH/$line" ]]; then
+		filepath=$(dirname "$line")
+		# if parent directory doesn't exist make it
+		if [[ ! -e "$filepath" ]]; then
+			mkdir -p "$filepath"
+			chown --reference=$PKG_EXTRACT_PATH/$filepath "$PKG_INSTALL_PATH/$filepath"
+			chmod --reference=$PKG_EXTRACT_PATH/$filepath "$PKG_INSTALL_PATH/$filepath"
+		fi
+		# move the file
 		mv -fp "$PKG_EXTRACT_PATH/$line" "$PKG_INSTALL_PATH/$line"
-	# skip directories
+
+	# if path is to a diretory, make it and its parents
 	elif [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
-		continue
-	# if target path points to neither file nor directory but isnt empty, throw an error
-	elif [[ -z "$line" ]]
-		echo "WARNING: could not locate file/dir: $line"
+		# if directory doesnt exist, make it
+		if [[ ! -e "$PKG_INSTALL_PATH/$line" ]]; then
+			mkdir -p "$PKG_INSTALL_PATH/$line"
+			chown --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
+			chmod --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
+		fi
+	# if path isn't recognized as a directory or a file, and isn't an empty string, throw a warning
+	elif [[ -z "$line" ]]; then
+		echo "WARNING: could not find the file/directory specified: $line"
 	fi
 done < $trace_file
 
-exit 0:
+# clean up anything left in the PKG_EXTRACT_PATH directory
+rm -rf "$PKG_EXTRACT_PATH/*"
+
+# exit successfully
+exit 0
