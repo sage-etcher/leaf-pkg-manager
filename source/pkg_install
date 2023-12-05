@@ -50,7 +50,10 @@ while read line; do
 		continue
 	# create directory if it does not already exist
 	elif [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
-		mkdir -p "$line"
+		mkdir -p "$PKG_INSTALL_PATH/$line"
+		# copy folder permissions as well
+		chown --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
+		chmod --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
 	# if target path points to neither file nor directory but isnt empty, throw an error
 	elif [[ -z "$line" ]]
 		echo "WARNING: could not locate file/dir: $line"
