@@ -2,7 +2,10 @@
 
 # PKG_ARCHIVE_PATH & PKG_EXTRACT_PATH & PKG_INSTALL_PATH must be set
 . pkg_init
-if [[ -z "$PKG_ARCHIVE_PATH" || -z "$PKG_EXTRACT_PATH" || -z "$PKG_INSTALL_PATH" ]]; then
+if [ -z "$PKG_ARCHIVE_PATH" ] || 
+   [ -z "$PKG_EXTRACT_PATH" ] || 
+   [ -z "$PKG_INSTALL_PATH" ]
+then
 	echo "ERROR: package enviornment variables are not set"
 	exit -1
 fi
@@ -10,33 +13,34 @@ fi
 # install a premade package to the system
 # param #1 = package archive file
 
-archive_file_raw=$1
+archive_file_raw="$1"
 archive_file=
 trace_file=
-if [[ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" && -e "$PKG_TRACES_PATH/$archive_file_raw.trace" ]]; then
-	archive_file=$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz
-	trace_file=$PKG_TRACES_PATH/$archive_file_raw.trace
+if [ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" ] && 
+   [ -e "$PKG_TRACES_PATH/$archive_file_raw.trace" ]
+then
+	archive_file="$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz"
+	trace_file="$PKG_TRACES_PATH/$archive_file_raw.trace"
 else
 	echo "ERROR: no such package"
 	exit -1
 fi
-unset archive_file_raw
 
 # make sure the extract folder exists
-mkdir -p $PKG_EXTRACT_PATH
+mkdir -p "$PKG_EXTRACT_PATH"
 # clean extract folder of any any previous bad files (in case of previous failure)
-rm -rf $PKG_EXTRACT_PATH/*
+rm -rf "$PKG_EXTRACT_PATH/*"
 
 # dump the package archive into the extract folder
-tar -xJpf $archive_file -C $PKG_EXTRACT_PATH
+tar -xJpf "$archive_file" -C "$PKG_EXTRACT_PATH"
 
 # move the package into its final location
 while read line; do
 	
 	# if path isn't recognized as a directory or a file, and isn't an empty string, throw a warning
 	if [ ! -e "$PKG_EXTRACT_PATH/$line" ] && 
-           [ ! -L "$PKG_EXTRACT_PATH/$line" ] && 
-           [ ! -z "$line" ]
+	   [ ! -L "$PKG_EXTRACT_PATH/$line" ] && 
+	   [ ! -z "$line" ]
 	then
 		echo "WARNING: could not find the file/directory specified: $line"
 		continue
@@ -55,14 +59,14 @@ while read line; do
 	chmod --reference=$PKG_EXTRACT_PATH/$directory "$PKG_INSTALL_PATH/$directory"
 
 	# move file if applicable
-	if [ ! -d "$PKG_EXTRACT_PATH/$line ]; then
+	if [ ! -d "$PKG_EXTRACT_PATH/$line" ]; then
 		mv -f "$PKG_EXTRACT_PATH/$line" "$PKG_INSTALL_PATH/$line"
 	fi
 
 done < $trace_file
 
 # clean up anything left in the PKG_EXTRACT_PATH directory
-rm -rf $PKG_EXTRACT_PATH/*
+rm -rf "$PKG_EXTRACT_PATH/*"
 
 
 # exit successfully
