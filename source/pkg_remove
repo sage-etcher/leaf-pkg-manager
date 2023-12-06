@@ -25,17 +25,17 @@ unset trace_input_raw
 
 # for each line in the trace file
 while read line; do
+	# if a path was given, but the file/dir could not be found, send a warning
+	if [[ ! -e "$PKG_INSTALL_PATH/$line" && ! -z "$PKG_INSTALL_PATH/$line" ]]; then
+		echo "WARNING: couldn't find file/directory: \"$line\""
 	# if file, remove it
-	if [[ -f  $line ]]; then
+	elif [[ ! -d  "$PKG_INSTALL_PATH/$line" ]]; then
 		rm -f $line
 	# if directory and is empty, remove it
-	elif [[ -d $line ]]; then
+	elif [[ -d "$PKG_INSTALL_PATH/$line" ]]; then
 		if [[ ! "$(ls -A $line)" ]]; then
 			rmdir $line
 		fi
-	# if a path was given, but the file/dir could not be found, send a warning
-	elif [[ $line != "" ]]; then
-		echo "WARNING: couldn't find file/directory: \"$line\""
 	fi
 done < $trace_file
 
