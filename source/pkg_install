@@ -14,8 +14,8 @@ fi
 # param #1 = package archive file
 
 # make sure that the package exsists
-if [ ! -e "$PKG_ARCHIVE_PATH/$1.tar.xz" ] ||
-   [ ! -e "$PKG_TRACES_PATH/$1.trace" ]
+if [ ! -f "$PKG_ARCHIVE_PATH/$1.tar.xz" ] ||
+   [ ! -f "$PKG_TRACES_PATH/$1.trace" ]
 then
 	echo "ERROR: no such package"
 	exit -1
