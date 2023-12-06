@@ -25,41 +25,40 @@ unset archive_file_raw
 # make sure the extract folder exists
 mkdir -p $PKG_EXTRACT_PATH
 # clean extract folder of any any previous bad files (in case of previous failure)
-if [[ "$(ls -A $PKG_EXTRACT_PATH)" ]]; then
-	rm -rf $PKG_EXTRACT_PATH/*
-fi
+rm -rf $PKG_EXTRACT_PATH/*
+
 # dump the package archive into the extract folder
 tar -xJpf $archive_file -C $PKG_EXTRACT_PATH
 
 # move the package into its final location
-filepath=
 while read line; do
 	
 	# if path isn't recognized as a directory or a file, and isn't an empty string, throw a warning
-	if [ ! -e "$PKG_EXTRACT_PATH/$line" ] && [ ! -L "$PKG_EXTRACT_PATH/$line" ] && [ ! -z "$line" ]; then
+	if [ ! -e "$PKG_EXTRACT_PATH/$line" ] && 
+           [ ! -L "$PKG_EXTRACT_PATH/$line" ] && 
+           [ ! -z "$line" ]
+	then
 		echo "WARNING: could not find the file/directory specified: $line"
-
-	# if path is to a file/symlinke (not a directory), make the parent directory and copy the file
-	elif [ ! -d "$PKG_EXTRACT_PATH/$line" ]; then
-		filepath=$(dirname "$line")
-		# if parent directory doesn't exist make it
-		if [[ ! -e "$filepath" ]]; then
-			mkdir -p "$filepath"
-			chown --reference=$PKG_EXTRACT_PATH/$filepath "$PKG_INSTALL_PATH/$filepath"
-			chmod --reference=$PKG_EXTRACT_PATH/$filepath "$PKG_INSTALL_PATH/$filepath"
-		fi
-		# move the file
-		mv -f "$PKG_EXTRACT_PATH/$line" "$PKG_INSTALL_PATH/$line"
-
-	# if path is to a diretory, make it and its parents
-	elif [[ -d "$PKG_EXTRACT_PATH/$line" ]]; then
-		# if directory doesnt exist, make it
-		if [[ ! -e "$PKG_INSTALL_PATH/$line" ]]; then
-			mkdir -p "$PKG_INSTALL_PATH/$line"
-			chown --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
-			chmod --reference=$PKG_EXTRACT_PATH/$line "$PKG_INSTALL_PATH/$line"
-		fi
+		continue
 	fi
+
+	# get the directory we want to play with
+	if [ -d "$PKG_EXTRACT_PATH/$line" ]; then
+		directory="$line"
+	else
+		directory=$(dirname "$line")
+	fi
+	
+	# copy directory owner + permissions onto the new one
+	mkdir -p "$PKG_EXTRACT_PATH/$directory"
+	chown --reference=$PKG_EXTRACT_PATH/$directory "$PKG_INSTALL_PATH/$directory"
+	chmod --reference=$PKG_EXTRACT_PATH/$directory "$PKG_INSTALL_PATH/$directory"
+
+	# move file if applicable
+	if [ ! -d "$PKG_EXTRACT_PATH/$line ]; then
+		mv -f "$PKG_EXTRACT_PATH/$line" "$PKG_INSTALL_PATH/$line"
+	fi
+
 done < $trace_file
 
 # clean up anything left in the PKG_EXTRACT_PATH directory
