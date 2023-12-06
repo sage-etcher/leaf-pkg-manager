@@ -55,8 +55,8 @@ while read line; do
 	
 	# copy directory owner + permissions onto the new one
 	mkdir -p "$PKG_EXTRACT_PATH/$directory"
-	chown --reference=$PKG_EXTRACT_PATH/$directory "$PKG_INSTALL_PATH/$directory"
-	chmod --reference=$PKG_EXTRACT_PATH/$directory "$PKG_INSTALL_PATH/$directory"
+	chown --reference="$PKG_EXTRACT_PATH/$directory" "$PKG_INSTALL_PATH/$directory"
+	chmod --reference="$PKG_EXTRACT_PATH/$directory" "$PKG_INSTALL_PATH/$directory"
 
 	# move file if applicable
 	if [ ! -d "$PKG_EXTRACT_PATH/$line" ]; then
