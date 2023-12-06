@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# PKG_TRACES_PATH must be set
+# PKG_TRACES_PATH & PKG_INSTALL_PATH must be set
 . pkg_init
-if [[ -z "$PKG_TRACES_PATH" ]]; then
+if [ -z "$PKG_TRACES_PATH" ] &&
+   [ -z "$PKG_INSTALL_PATH" ]
+then
 	echo "ERROR: package enviornment variables are not set"
 	exit -1
 fi
@@ -10,33 +12,37 @@ fi
 # uninstall a package using a .trace file
 # param #1 = package trace file
 
-trace_input_raw=$1
-trace_file=
-if [[ -e "$PKG_TRACES_PATH/$trace_input_raw.trace" ]]; then
-	trace_file=$PKG_TRACES_PATH/$trace_input_raw.trace
-elif [[ -e "$trace_input_raw" ]]; then
-	trace_file=$trace_input_raw
-else
-	echo "ERROR: no such file"
+# if the package doesnt exsist, throw an error
+if [ ! -f "$PKG_TRACES_PATH/$1.trace" ]; then
+	echo "ERROR: no such package"
 	exit -1
 fi
-unset trace_input_raw
 
+# get the trace file
+trace_file="$PKG_TRACES_PATH/$1.trace"
 
 # for each line in the trace file
 while read line; do
 	# if a path was given, but the file/dir could not be found, send a warning
-	if [ ! -e "$PKG_INSTALL_PATH/$line" ] && [ ! -L "$PKG_INSTALL_PATH/$line" ] && [ ! -z "$PKG_INSTALL_PATH/$line" ]; then
+	if [ ! -e "$PKG_INSTALL_PATH/$line" ] && 
+	   [ ! -L "$PKG_INSTALL_PATH/$line" ] && 
+	   [ ! -z "$PKG_INSTALL_PATH/$line" ]
+	then
 		echo "WARNING: couldn't find file/directory: \"$line\""
-	# if file, remove it
-	elif [[ ! -d  "$PKG_INSTALL_PATH/$line" ]]; then
-		rm -f $line
-	# if directory and is empty, remove it
-	elif [[ -d "$PKG_INSTALL_PATH/$line" ]]; then
-		if [[ ! "$(ls -A $line)" ]]; then
-			rmdir $line
-		fi
+		continue
 	fi
+
+	# if the path points to a file or symlink, remove it
+	if [ ! -d  "$PKG_INSTALL_PATH/$line" ]; then
+		rm -f "$PKG_INSTALL_PATH/$line"
+
+	# instead, if it poitns to an empty directory, remove it
+	elif [ -d "$PKG_INSTALL_PATH/$line" ] &&
+	     [ ! "$(ls -A $PKG_ISNTALL_PATH/$line)" ]
+	then
+		rmdir "$PKG_INSTALL_PATH/$line"
+	fi
+
 done < $trace_file
 
 exit 0
