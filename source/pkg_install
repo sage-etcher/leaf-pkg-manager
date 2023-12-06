@@ -36,11 +36,11 @@ filepath=
 while read line; do
 	
 	# if path isn't recognized as a directory or a file, and isn't an empty string, throw a warning
-	if [[ ! -e "$PKG_EXTRACT_PATH/$line" && ! -z "$PKG_EXTRACT_PATH/$line" ]]; then
+	if [ ! -e "$PKG_EXTRACT_PATH/$line" ] && [ ! -L "$PKG_EXTRACT_PATH/$line" ] && [ ! -z "$line" ]; then
 		echo "WARNING: could not find the file/directory specified: $line"
 
 	# if path is to a file/symlinke (not a directory), make the parent directory and copy the file
-	elif [[ ! -d "$PKG_EXTRACT_PATH/$line" ]]; then
+	elif [ ! -d "$PKG_EXTRACT_PATH/$line" ]; then
 		filepath=$(dirname "$line")
 		# if parent directory doesn't exist make it
 		if [[ ! -e "$filepath" ]]; then

@@ -26,7 +26,7 @@ unset trace_input_raw
 # for each line in the trace file
 while read line; do
 	# if a path was given, but the file/dir could not be found, send a warning
-	if [[ ! -e "$PKG_INSTALL_PATH/$line" && ! -z "$PKG_INSTALL_PATH/$line" ]]; then
+	if [ ! -e "$PKG_INSTALL_PATH/$line" ] && [ ! -L "$PKG_INSTALL_PATH/$line" ] && [ ! -z "$PKG_INSTALL_PATH/$line" ]; then
 		echo "WARNING: couldn't find file/directory: \"$line\""
 	# if file, remove it
 	elif [[ ! -d  "$PKG_INSTALL_PATH/$line" ]]; then
