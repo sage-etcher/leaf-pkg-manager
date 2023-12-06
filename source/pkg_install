@@ -13,18 +13,17 @@ fi
 # install a premade package to the system
 # param #1 = package archive file
 
-archive_file_raw="$1"
-archive_file=
-trace_file=
-if [ -e "$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz" ] && 
-   [ -e "$PKG_TRACES_PATH/$archive_file_raw.trace" ]
+# make sure that the package exsists
+if [ ! -e "$PKG_ARCHIVE_PATH/$1.tar.xz" ] ||
+   [ ! -e "$PKG_TRACES_PATH/$1.trace" ]
 then
-	archive_file="$PKG_ARCHIVE_PATH/$archive_file_raw.tar.xz"
-	trace_file="$PKG_TRACES_PATH/$archive_file_raw.trace"
-else
 	echo "ERROR: no such package"
 	exit -1
 fi
+
+# get the needed files for the package
+archive_file="$PKG_ARCHIVE_PATH/$1.tar.xz"
+trace_file="$PKG_TRACES_PATH/$1.trace"
 
 # make sure the extract folder exists
 mkdir -p "$PKG_EXTRACT_PATH"
