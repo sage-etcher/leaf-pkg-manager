@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# PKG_TRACES_PATH & PKG_ARCHIVE_PATH must be set
+. pkg_init
+if [ -z "$PKG_TRACES_PATH" ] &&
+   [ -z "$PKG_ARCHIVE_PATH" ]
+then
+    echo "ERROR: package enviorment variables are not set"
+    exit -1
+fi
+
+# param #1 current package name
+# param #2 new package name
+
+# if the package doesnt exists, throw an error
+if [ ! -f "$PKG_TRACES_PATH/$1.trace" ] ||
+   [ ! -f "$PKG_ARCHIVE_PATH/$1.tar.xz" ]
+then
+    echo "ERROR: no such package"
+    exit -1
+fi
+
+# get the packages files
+trace_file="$PKG_TRACES_PATH/$1.trace"
+archive_file="$PKG_ARCHIVE_PATH/$1.tar.xz"
+
+if [ -z "$2" ]; then
+    echo "ERROR: new name not given"
+    exit -1
+fi
+
+# get the new package files
+new_trace_file="$PKG_TRACES_PATH/$2.trace"
+new_archive_file="$PKG_ARCHIVE_PATH/$2.tar.xz"
+
+# throw a warning if the alias name exists
+if [ -f "$new_trace_file" ]   ||
+   [ -f "$new_archive_file" ] ||
+   [ -L "$new_trace_file" ]   ||
+   [ -L "$new_archive_file" ]
+then
+    valid_input=0
+    confirmation=
+    while [ $valid_input != 1 ]; do
+        echo "WARNING: A package with the same name already exists, would you like to overwrite it?"
+        read -p "[y/n] " confirmation
+
+        if [[ "${confirmation,,}" == "y" || "${confirmation,,}" == "n" ]]; then
+            valid_input=1
+        fi
+    done
+
+    if [[ "${confirmation,,}" == "n" ]]; then
+        exit 0
+    fi
+
+fi
+
+# create symlinks of the files
+mv -f "$trace_file" "$new_trace_file"
+mv -f "$archive_file" "$new_archive_file"
+
+# exit the program successfully
+exit 0

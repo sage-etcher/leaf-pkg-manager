@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# PKG_TRACES_PATH & PKG_ARCHIVE_PATH must be set
+. pkg_init
+if [ -z "$PKG_TRACES_PATH" ] &&
+   [ -z "$PKG_ARCHIVE_PATH" ]
+then
+    echo "ERROR: package enviorment variables are not set"
+    exit -1
+fi
+
+# permanently remove a package from the system
+# does NOT uninstall the package (pkg_remove)
+# param #1 package name
+
+# if the package doesnt exists, throw an error
+if [ ! -f "$PKG_TRACES_PATH/$1.trace" ] ||
+   [ ! -f "$PKG_ARCHIVE_PATH/$1.tar.xz" ]
+then
+    echo "ERROR: no such package"
+    exit -1
+fi
+
+# get the packages files
+trace_file="$PKG_TRACES_PATH/$1.trace"
+archive_file="$PKG_ARCHIVE_PATH/$1.tar.xz"
+
+# remove the files
+rm -f "$trace_file" "$archive_file"
+
+# exit the program successfully
+exit 0

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# PKG_TRACES_PATH & PKG_ARCHIVE_PATH must be set
+. pkg_init
+if [ -z "$PKG_TRACES_PATH" ] &&
+   [ -z "$PKG_ARCHIVE_PATH" ]
+then
+    echo "ERROR: package enviorment variables are not set"
+    exit -1
+fi
+
+# no params
+
+# make sure that the package directories exist
+if [ ! -d "$PKG_TRACES_PATH" ] ||
+   [ ! -d "$PKG_ARCHIVE_PATH" ]
+then
+    echo "ERROR: package directories could not be accessed"
+    exit -1
+fi
+
+# get directory contents
+LF="
+"
+
+packages=
+packages_raw=$(basename -s .tar.xz -a $(find "$PKG_ARCHIVE_PATH" -type f -name "*.tar.xz"))
+for pkg in $packages_raw; do
+    packages="\033[0;37m$pkg$LF$packages"
+done
+
+package_aliases_raw=$(find "$PKG_ARCHIVE_PATH" -type l -name "*.tar.xz")
+for pkg_alias in $package_aliases_raw; do
+    package_name=$(basename -s .tar.xz "$pkg_alias")
+    package_link=$(basename -s .tar.xz $(readlink "$pkg_alias"))
+    packages="\033[0;37m$package_name\033[1;34m($package_link)$LF$packages"
+done
+
+packages_sorted=$(echo "$packages" | sort | grep -v -e '^[[:space:]]*$' -)
+echo -e "$packages_sorted"
+
+# exit the program successfully
+exit 0
