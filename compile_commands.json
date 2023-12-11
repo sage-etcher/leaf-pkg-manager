@@ -1,0 +1,66 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "-std=c99",
+      "-pedantic",
+      "-Wall",
+      "-Werror",
+      "-o",
+      "build/pkg_globals.c.o",
+      "source/pkg_globals.c"
+    ],
+    "directory": "/home/dev/code/leaf-pkg-manager",
+    "file": "/home/dev/code/leaf-pkg-manager/source/pkg_globals.c",
+    "output": "/home/dev/code/leaf-pkg-manager/build/pkg_globals.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "-std=c99",
+      "-pedantic",
+      "-Wall",
+      "-Werror",
+      "-o",
+      "build/pkg_fileio.c.o",
+      "source/pkg_fileio.c"
+    ],
+    "directory": "/home/dev/code/leaf-pkg-manager",
+    "file": "/home/dev/code/leaf-pkg-manager/source/pkg_fileio.c",
+    "output": "/home/dev/code/leaf-pkg-manager/build/pkg_fileio.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "-std=c99",
+      "-pedantic",
+      "-Wall",
+      "-Werror",
+      "-o",
+      "build/pkg_config.c.o",
+      "source/pkg_config.c"
+    ],
+    "directory": "/home/dev/code/leaf-pkg-manager",
+    "file": "/home/dev/code/leaf-pkg-manager/source/pkg_config.c",
+    "output": "/home/dev/code/leaf-pkg-manager/build/pkg_config.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-c",
+      "-std=c99",
+      "-pedantic",
+      "-Wall",
+      "-Werror",
+      "-o",
+      "build/pkg.c.o",
+      "source/pkg.c"
+    ],
+    "directory": "/home/dev/code/leaf-pkg-manager",
+    "file": "/home/dev/code/leaf-pkg-manager/source/pkg.c",
+    "output": "/home/dev/code/leaf-pkg-manager/build/pkg.c.o"
+  }
+]

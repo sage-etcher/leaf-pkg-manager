@@ -1,0 +1,26 @@
+# start /etc/pkg/config.toml
+# Default configuration for the Leaf Package Manager, created by make
+#
+# Author: Sage I. Hendricks
+# Last Revision: December 11th, 2023
+#
+
+[general]
+
+# package database, contains list of installed packages and package information
+database_file = "/usr/share/pkg/packages.db"
+
+# directory to store local packages
+local_package_path = "/usr/share/pkg/local"
+
+# prefix for installing packages (DESTDIR)
+install_prefix = "/"
+
+# temporary location used when installing a package
+extract_path = "/tmp/pkg_extract"
+
+# logs errors, installs, creates, aliases, etc. 
+log_file = "/var/log/pkg.log"
+
+
+# end /etc/pkg/config.toml
