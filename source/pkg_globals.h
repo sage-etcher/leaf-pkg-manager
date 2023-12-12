@@ -5,6 +5,7 @@
 
 /* config file */
 extern const char *XDG_CONFIG_FILE;
+extern const char *HOME_CONFIG_FILE;
 extern const char *GLOBAL_CONFIG_FILE;
 extern char *g_config_file;
 

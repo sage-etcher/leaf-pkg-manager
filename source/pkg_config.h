@@ -3,10 +3,12 @@
 #ifndef __PKG_CONFIG_HEADER__
 #define __PKG_CONFIG_HEADER__
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <malloc.h>
 
-/* TOML v1.0.0 <https://github.com/cktan/tomlc99.git> */
+/* TOML v1.0.0 <https://github.com/cktan/tomc99.git> */
 /* MIT License */
 #include <toml.h>
 

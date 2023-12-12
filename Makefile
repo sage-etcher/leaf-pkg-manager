@@ -13,8 +13,11 @@ PKG_OBJECT_FILES := $(foreach filename,$(PKG_FILENAMES),$(BUILD_DIR)/$(filename)
 LD := clang
 CC := clang
 
-L_FLAGS :=
-C_FLAGS := -std=c99 -pedantic -Wall -Werror
+TOML_L_FLAGS := -L/usr/local/lib -ltoml
+TOML_C_FLAGS :=
+
+L_FLAGS :=$(TOML_L_FLAGS)
+C_FLAGS :=$(TOML_C_FLAGS) -std=c99 -pedantic -Wall -Werror
 
 .PHONY: build
 build: $(BUILD_DIR)/$(PKG_EXEC)

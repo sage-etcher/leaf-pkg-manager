@@ -1,8 +1,18 @@
 #include "pkg_fileio.h"
 
+#include <complex.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+
+#include <assert.h>
 
 
+/* function prototypes */
+
+
+/* function definitions */
 int
 file_exists (const char * restrict filepath)
 {
@@ -19,6 +29,122 @@ file_exists (const char * restrict filepath)
 
 	/* otherwise, if the command fails, return a failures */
 	return (0);
+}
+
+
+char *
+expand_enviornment_variable (const char *s, int *expanded_flag)
+{
+    /* size storeage for fake substrings, used to avoid repeated subtraction */
+    size_t result_size, value_size, env_size, pre_size, post_size;
+
+    char *pre_start,  *pre_end;     /* string before enviornment variable */
+    char *post_start, *post_end;    /* string after enviornment variable */
+    char *env_start,  *env_end;     /* enviornment variable */
+
+    char *env_substr;               /* substring of the enviornment variable */
+    char *result, *result_iter;     /* result variable */
+
+    const char *value;              /* expanded enviornment variable */
+
+
+    /* get prefix "substr" */
+    pre_start = (char *)s;
+    pre_end   = strstr ("${", s);
+   
+    if (pre_end == NULL)
+    {
+        *expanded_flag = -1;
+        return (char *)s;
+    }
+
+    pre_size  = pre_end - pre_start;
+
+    /* get the enviornment variable "substr" */
+    env_start = pre_end+2;  /* not a memory leak, if EOS will start on '\0' */
+    env_end   = strstr ("}", env_start);
+
+    if (env_end == NULL)
+    {
+        *expanded_flag = -1;
+        return (char *)s;
+    } 
+
+    env_size  = env_end - env_start;
+
+    env_substr = malloc ((env_size + 1) * sizeof (char));
+    assert (env_substr != NULL);
+    (void)strncpy (env_substr, env_start, env_size);
+    env_substr[env_size] = '\0';
+
+    /* get suffix "substr" */
+    post_start = env_end+1; /* not a mem leak, if EOS will start on '\0' */
+    post_end   = (char *)(s + strlen (s));
+
+    post_size = post_end - post_start;
+
+    /* expand the enviornment variable */
+    value = getenv (env_substr);
+    if (value == NULL)
+        value = "";
+
+    value_size = strlen (value);
+
+    /* concatenate results into result */
+    result_size = pre_size + value_size + post_size;
+    result = malloc ((result_size + 1) * sizeof (char));
+    assert (result != NULL);
+    result_iter = result;
+ 
+    /* concatenate prefix to result */
+    (void)strncpy (result_iter, pre_start, pre_size);
+    result_iter += pre_size;
+
+    /* concatenate value to result */
+    (void)strncpy (result_iter, value, value_size);
+    result_iter += value_size;
+
+    /* concatenate suffex to result */
+    (void)strncpy (result_iter, post_start, post_size);
+    result_iter += post_size;
+
+    /* add null terminator */
+    *(result_iter++) = '\0';
+
+    /* free the substring from earlier */
+    free (env_substr);
+
+    /* return that a variable was expanded, and the result */
+    *expanded_flag = 0;
+    return result;
+}
+
+
+char *
+expand_enviornment_variables_iterative (const char *s)
+{
+    int expanded_env;
+    char *result, *overhead;
+
+    /* first pass use the given string */
+    result = expand_enviornment_variable(s, &expanded_env);
+
+    /* while expand_enviornment_variable keeps expanding more variables */
+    while (expanded_env == 0)
+    {
+        /* expand the next variable */
+        overhead = expand_enviornment_variable(result, &expanded_env);
+
+        /* if it succeeds, copy the new value into result */
+        if (result != overhead)
+        {
+            free (result);
+            result = overhead;
+        }
+    }
+
+    /* return the result string, with all enviornment variables expanded */
+    return result;
 }
 
 
