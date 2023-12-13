@@ -66,9 +66,8 @@ string_array_join (char **list, size_t count, char *seperator)
          * next string */
         (void)strncpy (result_iter, list[i], list_elem_length);
          
-
         /* If that was the last string in list, dont add a seperator */
-        if ((i + 1) >= count)
+        if ((i + 1) == count)
         {
             break;
         }
