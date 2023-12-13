@@ -3,3 +3,5 @@ build/**
 
 **.swp
 **.bak
+
+compile_commands.json

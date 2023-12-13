@@ -3,6 +3,8 @@
 #ifndef __PKG_GLOBALS_HEADER__
 #define __PKG_GLOBALS_HEADER__
 
+#include <malloc.h>
+
 /* config file */
 extern const char *XDG_CONFIG_FILE;
 extern const char *HOME_CONFIG_FILE;
@@ -23,5 +25,10 @@ extern char *g_config_local_package_path;
 extern char *g_config_install_prefix;
 extern char *g_config_extract_path;
 extern char *g_config_log_file;
+
+
+/* function prototypes */
+void global_cleanup (void);
+
 
 #endif /* run once */

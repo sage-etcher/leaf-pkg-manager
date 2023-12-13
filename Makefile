@@ -6,7 +6,7 @@ PREFIX := /usr/local
 BIN_DIR := $(DESTDIR)/$(PREFIX)/bin
 
 PKG_EXEC := pkg
-PKG_FILENAMES := pkg_globals.c pkg_fileio.c pkg_config.c pkg.c
+PKG_FILENAMES := pkg_globals.c pkg_fileio.c pkg_log.c pkg_conargs.c pkg_config.c pkg.c
 PKG_SOURCE_FILES := $(foreach filename,$(PKG_FILENAMES),$(SOURCE_DIR)/$(filename))
 PKG_OBJECT_FILES := $(foreach filename,$(PKG_FILENAMES),$(BUILD_DIR)/$(filename).o)
 
@@ -17,7 +17,20 @@ TOML_L_FLAGS := -L/usr/local/lib -ltoml
 TOML_C_FLAGS :=
 
 L_FLAGS :=$(TOML_L_FLAGS)
-C_FLAGS :=$(TOML_C_FLAGS) -std=c99 -pedantic -Wall -Werror
+
+DEBUG_C_FLAGS := -O0 -g
+RELEASE_C_FLAGS := -O3
+C_FLAGS :=$(TOML_C_FLAGS) 
+C_FLAGS += -std=c99 -pedantic -Wpedantic
+C_FLAGS += -Wall 
+#C_FLAGS += -Werror
+C_FLAGS += -Wno-format-pedantic
+C_FLAGS += -Wno-unused-function
+C_FLAGS += -Wno-unused-label
+#C_FLAGS += -Wno-unused-variable
+#C_FLAGS += $(RELEASE_C_FLAGS)
+C_FLAGS += $(DEBUG_C_FLAGS)
+
 
 .PHONY: build
 build: $(BUILD_DIR)/$(PKG_EXEC)

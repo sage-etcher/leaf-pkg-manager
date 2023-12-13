@@ -11,6 +11,7 @@
 
 #include "pkg_globals.h"
 #include "pkg_fileio.h"
+#include "pkg_log.h"
 
 
 /* function prototypes */
@@ -21,36 +22,36 @@ static char *get_toml_string (toml_table_t *table, const char *key);
 const char *
 conf_get_file (void)
 {
-    const char *selected_config_file = NULL;    /* default NULL */
-    char *expanded_xdg_config, *expanded_home_config, *expanded_global_config;
+    char *expanded_xdg, *expanded_home, *expanded_global;
 
-    /* expanded versin of config files */
-    expanded_xdg_config = expand_enviornment_variables_iterative(XDG_CONFIG_FILE);
-    expanded_home_config = expand_enviornment_variables_iterative(HOME_CONFIG_FILE);
-    expanded_global_config = expand_enviornment_variables_iterative(GLOBAL_CONFIG_FILE);
-
-    /* go through the if else statement, favoring the upper most file */
-    /* default is defined as NULL in variable declaration */
-    if (file_exists (expanded_xdg_config))
+    /* use the expanded for of XDG_CONFIG_FILE if the file exists */
+    expanded_xdg = expand_enviornment_variables_iterative(XDG_CONFIG_FILE);
+    if (file_exists (expanded_xdg))
     {
-        selected_config_file = XDG_CONFIG_FILE;
+        return expanded_xdg;
     }
-    else if (file_exists (expanded_home_config))
-    {
-        selected_config_file = HOME_CONFIG_FILE;
-    }
-    else if (file_exists (expanded_global_config))
-    {
-        selected_config_file = GLOBAL_CONFIG_FILE;
-    }
+    free (expanded_xdg);
+   
 
-    /* free the expanded file paths */
-    free (expanded_global_config);
-    free (expanded_home_config);
-    free (expanded_xdg_config);
+    /* use the expanded for of XDG_CONFIG_FILE if the file exists */
+    expanded_home = expand_enviornment_variables_iterative(HOME_CONFIG_FILE);
+    if (file_exists (expanded_home))
+    {
+        return expanded_home;
+    }
+    free (expanded_home);
+    
+    /* use the expanded for of XDG_CONFIG_FILE if the file exists */
+    expanded_global = expand_enviornment_variables_iterative(GLOBAL_CONFIG_FILE);
+    if (file_exists (expanded_global))
+    {
+        return expanded_global;
+    }
+    free (expanded_global);
 
-    /* return the result */
-    return selected_config_file;
+
+    /* if no config file exists/is found, return NULL ptr */
+    return NULL;
 }
 
 
@@ -58,14 +59,14 @@ static char *
 get_toml_string (toml_table_t *table, const char *key)
 {
     toml_datum_t toml_data;
-    
+
     toml_data = toml_string_in (table, key);
+
     if (!toml_data.ok)
     {
-        fprintf (stderr, "ERROR: connot parse TOML\n");
         return NULL;
     }
-   
+  
     return toml_data.u.s;
 }
 
@@ -82,14 +83,19 @@ conf_interpret_toml (const char * restrict filepath)
 
     /* load the file as TOML v1.0.0 */
     toml_config = toml_parse_file (fp, error_buff, sizeof (error_buff));
+    (void)fclose (fp);
+
     if (!toml_config)
     {
-        fprintf (stderr, "ERROR: cannot parse config file");
-        exit (-1);
+        return -1;
     }
 
     /* load the general table */
     toml_general_table = toml_table_in(toml_config, CONFIG_TABLE_GENERAL); 
+    if (toml_general_table == NULL)
+    {
+        return -1;
+    }
 
     /* get the database file path from the config file */
     g_config_database_file = get_toml_string (toml_general_table, CONFIG_KEY_DBFILE); 
@@ -108,8 +114,7 @@ conf_interpret_toml (const char * restrict filepath)
         (g_config_extract_path == NULL) ||
         (g_config_log_file == NULL))
     {
-        fprintf (stderr, "ERROR: missing field in config\n");
-        exit (-1);
+        return -1;
     }
 
     return 0;   
@@ -123,12 +128,16 @@ conf_source (void)
     g_config_file = (char *)conf_get_file ();
     if (g_config_file == NULL)
     {
-        fprintf (stderr, "ERROR: could not find configuration file, \"%s\"\n",
-                GLOBAL_CONFIG_FILE);
-        return -1;
+        log_to_term (stderr, ERROR_NO_CONFIG_FILE);
+        exit (-1);
     }
 
-    (void)conf_interpret_toml (g_config_file);
+    /* try to parse the config file, throw error if an issue occurs */
+    if (conf_interpret_toml (g_config_file) != 0)
+    {
+        log_to_term (stderr, ERROR_PARSING_TOML);
+        exit (-1);
+    }
 
     return 0;
 }

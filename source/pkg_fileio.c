@@ -1,6 +1,5 @@
 #include "pkg_fileio.h"
 
-#include <complex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,7 +22,7 @@ file_exists (const char * restrict filepath)
 	/* if fopen succeeds, close the file, and return a success */ 
 	if (fp != NULL)
 	{
-		fclose (fp);
+		(void)fclose (fp);
 		return (1);
 	}
 
@@ -50,24 +49,34 @@ expand_enviornment_variable (const char *s, int *expanded_flag)
 
     /* get prefix "substr" */
     pre_start = (char *)s;
-    pre_end   = strstr ("${", s);
-   
+    pre_end   = strstr (s, "${");
+
     if (pre_end == NULL)
     {
         *expanded_flag = -1;
-        return (char *)s;
+        
+        result = malloc ((strlen (s) + 1) * sizeof (char));
+        assert (result != NULL);
+        (void)strcpy (result, s);
+
+        return result;
     }
 
     pre_size  = pre_end - pre_start;
 
     /* get the enviornment variable "substr" */
     env_start = pre_end+2;  /* not a memory leak, if EOS will start on '\0' */
-    env_end   = strstr ("}", env_start);
+    env_end   = strstr (env_start, "}");
 
     if (env_end == NULL)
     {
         *expanded_flag = -1;
-        return (char *)s;
+        
+        result = malloc ((strlen (s) + 1) * sizeof (char));
+        assert (result != NULL);
+        (void)strcpy (result, s);
+
+        return result;
     } 
 
     env_size  = env_end - env_start;
@@ -136,10 +145,14 @@ expand_enviornment_variables_iterative (const char *s)
         overhead = expand_enviornment_variable(result, &expanded_env);
 
         /* if it succeeds, copy the new value into result */
-        if (result != overhead)
+        if (expanded_env == 0)
         {
             free (result);
             result = overhead;
+        }
+        else
+        {
+            free (overhead);
         }
     }
 
@@ -157,11 +170,11 @@ file_text_size (FILE * restrict fp)
 	file_pos = ftell (fp);
 
 	/* goto the end of the stream and get the offset */
-	fseek (fp, 0L, SEEK_END);
+	(void)fseek (fp, 0L, SEEK_END);
 	file_size = ftell (fp);
 	
 	/* restore the stream's position */
-	fseek (fp, file_pos, SEEK_SET);
+	(void)fseek (fp, file_pos, SEEK_SET);
 
 	/* return size of the given stream */
 	return file_size;
@@ -182,13 +195,32 @@ file_read_content (const char * restrict filepath)
 	/* get size of content */
 	content_size = file_text_size (fp);
 	content = (char * restrict)malloc (content_size);
+    assert (content != NULL);
 
 	/* read data from the file into content */
 	(void)fgets (content, content_size, fp);
 
 	/* close the file and exit */
-	fclose (fp);
+	(void)fclose (fp);
 	return content;
 }
+
+
+int
+file_append (const char *filename, const char *data)
+{
+    FILE *fp;
+
+    fp = fopen (filename, "a+");
+    if (fp == NULL)
+        return -1;
+
+    (void)fprintf (fp, "%s", data); 
+
+    (void)fclose (fp);
+
+    return 0;
+}
+
 
 /* end of file */
