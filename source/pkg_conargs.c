@@ -88,7 +88,7 @@ string_array_join (char **list, size_t count, char *seperator)
 }
 
 
-int
+void
 conarg_settings (int argc, char **argv)
 {
     char *arg_ptr;
@@ -111,8 +111,6 @@ conarg_settings (int argc, char **argv)
     }
 
     TRACE_FREE (argv_string);
-
-    return 0;
 }
 
 

@@ -19,13 +19,13 @@
 
 
 /* get the most relevent config file */
-const char *conf_get_file (void);
+const char *conf_get_file (void) WARN_UNUSED_RESULT;
 
 /* interpret the config file from human readable format to usable data */
-int conf_interpret (const char * restrict content);
+int conf_interpret (const char * restrict content) WARN_UNUSED_RESULT;
 
 /* source the config file, getting needed configureation settings from it */
-int conf_source (void);
+void conf_source (void);
 
 
 

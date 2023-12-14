@@ -20,11 +20,11 @@ file_exists (const char * restrict filepath)
 	FILE *fp;
 
 	/* try to open the file */
-	fp = fopen (filepath, "r");
+	fp = TRACE_FOPEN (filepath, "r");
 	/* if fopen succeeds, close the file, and return a success */ 
 	if (fp != NULL)
 	{
-		(void)fclose (fp);
+		(void)TRACE_FCLOSE (fp);
 		return (1);
 	}
 
@@ -138,8 +138,8 @@ expand_enviornment_variables_iterative (const char *s)
     char *result, *overhead;
 
     /* first pass use the given string */
-    result = expand_enviornment_variable(s, &expanded_env);
-
+    result = expand_enviornment_variable (s, &expanded_env);
+    
     /* while expand_enviornment_variable keeps expanding more variables */
     while (expanded_env == 0)
     {
@@ -190,7 +190,7 @@ file_read_content (const char * restrict filepath)
 	size_t content_size; 
 
 	/* open the file */
-	fp = fopen (filepath, "r");
+	fp = TRACE_FOPEN (filepath, "r");
 	if (fp == NULL)
 		return NULL;
 
@@ -203,7 +203,7 @@ file_read_content (const char * restrict filepath)
 	(void)fgets (content, content_size, fp);
 
 	/* close the file and exit */
-	(void)fclose (fp);
+	(void)TRACE_FCLOSE (fp);
 	return content;
 }
 
@@ -213,13 +213,13 @@ file_append (const char *filename, const char *data)
 {
     FILE *fp;
 
-    fp = fopen (filename, "a+");
+    fp = TRACE_FOPEN (filename, "a+");
     if (fp == NULL)
         return -1;
 
     (void)fprintf (fp, "%s", data); 
 
-    (void)fclose (fp);
+    (void)TRACE_FCLOSE (fp);
 
     return 0;
 }

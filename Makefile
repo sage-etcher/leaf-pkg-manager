@@ -24,10 +24,11 @@ C_FLAGS :=$(TOML_C_FLAGS)
 C_FLAGS += -std=c99 -pedantic -Wpedantic
 C_FLAGS += -Wall 
 #C_FLAGS += -Werror
+C_FLAGS += -Wunused
 C_FLAGS += -Wunused-result
 C_FLAGS += -Wno-macro-redefined
 C_FLAGS += -Wno-format-pedantic
-C_FLAGS += -Wno-unused-function
+#C_FLAGS += -Wno-unused-function
 C_FLAGS += -Wno-unused-label
 #C_FLAGS += -Wno-unused-variable
 #C_FLAGS += $(RELEASE_C_FLAGS)

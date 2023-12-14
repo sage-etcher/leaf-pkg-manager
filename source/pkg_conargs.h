@@ -13,7 +13,7 @@
 
 /* function prototypes */
 void conarg_hello (void);
-int conarg_settings (int argc, char **argv);
+void conarg_settings (int argc, char **argv);
 
 
 #endif /* run once */

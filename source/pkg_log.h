@@ -19,7 +19,7 @@ extern err_msg ERROR_PARSING_TOML;
 
 
 /* function prototypes */
-int  log_to_file (const char *log_file, const char *msg);
+int  log_to_file (const char *log_file, const char *msg) WARN_UNUSED_RESULT;
 void log_to_term (FILE *stream, const char *msg);
 void log_message (const char *msg);
 

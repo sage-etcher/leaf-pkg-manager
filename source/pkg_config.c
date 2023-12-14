@@ -80,11 +80,11 @@ conf_interpret_toml (const char * restrict filepath)
     char error_buff[200];
 
     /* open the file */
-    fp = fopen (filepath, "r");
+    fp = TRACE_FOPEN (filepath, "r");
 
     /* load the file as TOML v1.0.0 */
     toml_config = toml_parse_file (fp, error_buff, sizeof (error_buff));
-    (void)fclose (fp);
+    (void)TRACE_FCLOSE (fp);
 
     if (!toml_config)
     {
@@ -122,7 +122,7 @@ conf_interpret_toml (const char * restrict filepath)
 }
 
 
-int
+void
 conf_source (void)
 {
     /* get the configuration file to use */
@@ -139,8 +139,6 @@ conf_source (void)
         log_to_term (stderr, ERROR_PARSING_TOML);
         exit (-1);
     }
-
-    return 0;
 }
 
 

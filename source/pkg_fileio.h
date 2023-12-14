@@ -14,12 +14,12 @@
 
 
 /* functions prototypes */
-char *expand_enviornment_variable (const char *s, int *expanded_flag);
-char *expand_enviornment_variables_iterative (const char *s);
+char *expand_enviornment_variable (const char *s, int *expanded_flag) WARN_UNUSED_RESULT;
+char *expand_enviornment_variables_iterative (const char *s) WARN_UNUSED_RESULT;
 
-int file_exists (const char *filepath);
-int file_append (const char *filepath, const char *data);
-char *file_read_content (const char *filepath);
+int file_exists (const char *filepath) WARN_UNUSED_RESULT;
+int file_append (const char *filepath, const char *data) WARN_UNUSED_RESULT;
+char *file_read_content (const char *filepath) WARN_UNUSED_RESULT;
 
 
 #endif /* run once */
