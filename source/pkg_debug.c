@@ -5,7 +5,7 @@
 #include <assert.h>
 
 /* wrapper */
-#ifdef DEBUG_MODE
+#if defined(DEBUG_MODE)
 
 /* log file to use */
 const char *DEBUG_LOG_FILE = "pkgdebug.log";
@@ -20,7 +20,7 @@ enum {
     DEBUG_ID_FCLOSE
 };
 
-const size_t LOG_TEXT_MAXLEN = 50;
+#define LOG_TEXT_MAXLEN 50
 char g_log_text[LOG_TEXT_MAXLEN];
 
 
@@ -36,8 +36,12 @@ static void
 log_to_stream (FILE *stream, void *ptr, const char *log_text,
         const int line_number, const char *source_file)
 {
+    #if defined(DEBUG_LOG_TO_LOGFILE) || defined(DEBUG_LOG_TO_STDOUT)
+
     (void)fprintf (stream, "%p: %s: %s: %d\n",
             ptr, log_text, source_file, line_number);
+
+    #endif /* defined(DEBUG_INFO_LOGFILE) || defined (DEBUG_INFO_STDOUT) */
 }
 
 
@@ -45,7 +49,7 @@ static void
 log_to_file (const char *filename, void *ptr, const char *log_text,
         const int line_number, const char *source_file)
 {
-    #ifdef DEBUG_INFO_LOGFILE
+    #if defined(DEBUG_LOG_TO_LOGFILE)
 
     FILE *fp;
 
@@ -54,14 +58,17 @@ log_to_file (const char *filename, void *ptr, const char *log_text,
     if (fp == NULL)
     {
         /* if the file cannot be opened, throw a warning to stderr */
-        (void)fprintf (stderr, "DEBUG WARNING: couldn't open the debug log_cmd file\n");
+        (void)fprintf (stderr, "DEBUG WARNING: couldn't open the log file\n");
         return;
     }
 
     /* otherwise, if the file was opened, log_cmd to it */
     log_to_stream (fp, ptr, log_text, line_number, source_file);
+
+    /* close the file */
+    fclose (fp);
    
-    #endif /* ifdef DEBUG_INFO_LOGFILE */
+    #endif /* defined(DEBUG_INFO_LOGFILE) */
 }
 
 
@@ -69,11 +76,15 @@ static void
 log_to_stdout (void *ptr, const char *log_text, const int line_number,
         const char *source_file)
 {
-    #ifdef DEBUG_INFO_STDOUT
+    #if defined(DEBUG_LOG_TO_STDOUT)
 
+    /* log to stdout buffer */
     log_to_stream (stdout, ptr, log_text, line_number, source_file);
 
-    #endif /* ifdef DEBUG_INFO_STDOUT */
+    /* flush the stdout buffer to counteract an issue with bash */
+    fflsuh (stdout);
+
+    #endif /* defined(DEBUG_INFO_STDOUT) */
 }
 
 
@@ -159,13 +170,13 @@ debug_free (void *ptr, const int line_number, const char *source_file)
 
 
 FILE *
-debug_fopen (const char *filename, const char *access_specifier
+debug_fopen (const char *filename, const char *access_specifier,
         const int line_number, const char *source_file)
 {
     FILE *open_file;
 
     /* reallocate the ptr */
-    new_ptr = fopen (filename, access_specifier);
+    open_file = fopen (filename, access_specifier);
 
     /* log the operation */
     (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: fopen (\"%s\", \"%s\")",
@@ -173,7 +184,7 @@ debug_fopen (const char *filename, const char *access_specifier
     log_cmd (open_file, g_log_text, line_number, source_file);
 
     /* return the new pointer */
-    return new_ptr;
+    return open_file;
 }
 
 
@@ -196,4 +207,4 @@ debug_fclose (FILE *fp, const int line_number, const char *source_file)
 
 
 /* end of DEBUG_MODE wrapper */
-#endif /* def DEBUG_MODE */
+#endif /* defined(DEBUG_MODE) */

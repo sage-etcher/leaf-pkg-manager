@@ -11,10 +11,11 @@
 
 
 /* enable/disable debug mode */
-#undef DEBUG_MODE
+#define DEBUG_MODE
+
 
 /* use basic fucntions if not in debug mode */
-#ifndef DEBUG_MODE
+#if !defined(DEBUG_MODE)
 #define TRACE_MALLOC(size)       (malloc  (size))
 #define TRACE_CALLOC(size,count) (calloc  (size, count))
 #define TRACE_REALLOC(ptr,size)  (realloc (ptr,  size))
@@ -22,15 +23,15 @@
 #define TRACE_FOPEN(name,access) (fopen   (name, access))
 #define TRACE_FCLOSE(file)       (fclose  (file))
 
-#endif /* ndef DEBUG_MODE */
+#endif /* !defined(DEBUG_MODE) */
 
 
 /* use custom functions if in debug mode */
-#ifdef DEBUG_MODE
+#if defined(DEBUG_MODE)
 
 /* where to log information to */
 #undef DEBUG_LOG_TO_STDOUT
-#undef DEBUG_LOG_TO_LOGFILE
+#define DEBUG_LOG_TO_LOGFILE
 
 extern const char *debug_log_file;
 
@@ -44,15 +45,15 @@ extern const char *debug_log_file;
 
 
 /* debug logging functions */
-void *debug_malloc  (size_t bytes, const int line_number, const char *source_file);
-void *debug_calloc  (size_t bytes, size_t count, const int line_number, const char *source_file);
-void *debug_realloc (void *ptr, size_t bytes, const int line_number, const char *source_file);
+void *debug_malloc  (size_t bytes, const int line_number, const char *source_file) WARN_UNUSED_RESULT;
+void *debug_calloc  (size_t bytes, size_t count, const int line_number, const char *source_file) WARN_UNUSED_RESULT;
+void *debug_realloc (void *ptr, size_t bytes, const int line_number, const char *source_file) WARN_UNUSED_RESULT;
 void  debug_free    (void *ptr, const int line_number, const char *source_file);
-FILE *debug_fopen   (const char *filename, const char *access_specifier, const int line_number, const char *source_file);
-int   debug_fclose  (FILE *fp, const int line_number, const char *source_file);
+FILE *debug_fopen   (const char *filename, const char *access_specifier, const int line_number, const char *source_file) WARN_UNUSED_RESULT;
+int   debug_fclose  (FILE *fp, const int line_number, const char *source_file) WARN_UNUSED_RESULT;
 
 
-#endif /* def DEBUG_MOD */
+#endif /* defined(DEBUG_MOD) */
 
 #endif /* run once */
 
