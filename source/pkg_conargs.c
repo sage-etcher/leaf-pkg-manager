@@ -88,29 +88,124 @@ string_array_join (char **list, size_t count, char *seperator)
 }
 
 
+static int
+is_whitespace_char (char c)
+{
+
+    /* return 0 if the character is whitespace */
+    switch (c)
+    {
+    case ' ':
+    case '\t':
+    case '\n':
+    case '\r':
+        return 0;
+    }
+
+    /* return 1 in all other cases */
+    return 1;
+}
+
+
+static char *
+trim_whitespace (const char *source_str)
+{
+    char *base, *end;
+    char *trimmed_string;
+    size_t trimmed_len;
+
+    /* Iterate through soruce_str until either a non-whitespace character is
+     * found, or we reach the end of the string. */
+    base = (char *)source_str;
+    while ((*base != '\0')
+           && (is_whitespace_char (*base++) != 0));
+
+    /* Iterate through soruce_str back to front until either a non-whitespace
+     * character is found, or we reach the base of the string. */
+    end = (char *)source_str+strlen (source_str) - 1;
+    while ((end >= base)
+           && (is_whitespace_char (*end--) != 0));
+
+    /* place the end ptr after the non-whitespace character */
+    end++;
+
+    /* copy the sub string into result */
+    trimmed_len = end - base;
+    trimmed_string = TRACE_MALLOC ((trimmed_len + 1) * sizeof (char));
+    assert (trimmed_string != NULL);
+    (void)strncpy (trimmed_string, base, trimmed_len);
+    trimmed_string[trimmed_len] = '\0';
+
+    /* return the trimmed string */
+    return trimmed_string;
+}
+
+
+/* returns the new index, index stays the same if no matches are found */
+static int
+get_long_commands (char **list, int index, int count)
+{
+    const char LONG_PREFIX[] = "--";
+    char *arg= trim_whitespace (list[index]);
+
+    /* all long commands start with the LONG_PREFIX (normally "--"), if the
+     * given string doesn't, then we know that it is not a long command. */
+    if (strncmp (arg, LONG_PREFIX, sizeof (LONG_PREFIX)) == 0)
+    {
+        goto get_long_commands_exit_0;
+    }
+
+    /* run through a large if-else chain to find out if we have a match. :/ */
+
+
+
+get_long_commands_exit_0:
+    TRACE_FREE (arg);
+    return index;
+}
+
+
+static int
+get_short_commands (char **list, unsigned index, unsigned count)
+{
+
+    return 0;
+}
+
+
+static void
+get_packages (char **list, unsigned index, unsigned count)
+{
+    
+    return;
+}
+
+
 void
 conarg_settings (int argc, char **argv)
 {
-    char *arg_ptr;
-    char *argv_string;
+    int i, overhead;
 
-    /* Skip the first element of argv, then join the remaining elements into
-     * a single string */
-    argv_string = string_array_join (argv+1, argc - 1, " ");
-
-    (void)printf ("%s\n", argv_string);
-
-    /* Iterate through each character in argv_string */
-    arg_ptr = argv_string;
-    while (*arg_ptr != '\0')
+    i = 1; /* start at the first arguement */
+    for (; i < argc; i++)
     {
-        /* (void)printf ("%p %c\n", arg_ptr, *arg_ptr); */
+        /* check if the arguement matches one of the long commands */
+        overhead = get_long_commands (argv, i, argc);
+        if (overhead != i)
+        {
+            i = overhead;
+            continue;
+        }
 
-        /* move to the next character */
-        arg_ptr++;
+        /* check if the arguement matches any unix style commands */
+        if (get_short_commands (argv, i, argc) == 0)
+            continue;
+
+        /* if neither short or long command, assume the rest of the arguements
+         * to be package names */ 
+        get_packages (argv, i, argc);
+        break;
     }
-
-    TRACE_FREE (argv_string);
 }
 
 
