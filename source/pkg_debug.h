@@ -11,7 +11,7 @@
 
 
 /* enable/disable debug mode */
-#define DEBUG_MODE
+#undef DEBUG_MODE
 
 
 /* use basic fucntions if not in debug mode */
