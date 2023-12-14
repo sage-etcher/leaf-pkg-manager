@@ -2,6 +2,8 @@
 
 #include <malloc.h>
 
+#include "pkg_debug.h"
+
 /* config file locations */
 const char *XDG_CONFIG_FILE    = "${XDG_CONFIG_HOME}/pkg/config.toml";
 const char *HOME_CONFIG_FILE   = "${HOME}/.pkg.toml";
@@ -34,18 +36,18 @@ global_cleanup (void)
 {
     /* clean up config settings */
     free_config ();
-    free (g_config_file);
+    TRACE_FREE (g_config_file);
 }
     
 
 static void 
 free_config (void)
 {
-    free (g_config_database_file);
-    free (g_config_local_package_path);
-    free (g_config_install_prefix);
-    free (g_config_extract_path);
-    free (g_config_log_file);
+    TRACE_FREE (g_config_database_file);
+    TRACE_FREE (g_config_local_package_path);
+    TRACE_FREE (g_config_install_prefix);
+    TRACE_FREE (g_config_extract_path);
+    TRACE_FREE (g_config_log_file);
 
     return;
 }

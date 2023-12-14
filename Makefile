@@ -6,7 +6,7 @@ PREFIX := /usr/local
 BIN_DIR := $(DESTDIR)/$(PREFIX)/bin
 
 PKG_EXEC := pkg
-PKG_FILENAMES := pkg_globals.c pkg_fileio.c pkg_log.c pkg_conargs.c pkg_config.c pkg.c
+PKG_FILENAMES := pkg_debug.c pkg_globals.c pkg_fileio.c pkg_log.c pkg_conargs.c pkg_config.c pkg.c
 PKG_SOURCE_FILES := $(foreach filename,$(PKG_FILENAMES),$(SOURCE_DIR)/$(filename))
 PKG_OBJECT_FILES := $(foreach filename,$(PKG_FILENAMES),$(BUILD_DIR)/$(filename).o)
 
@@ -24,6 +24,8 @@ C_FLAGS :=$(TOML_C_FLAGS)
 C_FLAGS += -std=c99 -pedantic -Wpedantic
 C_FLAGS += -Wall 
 #C_FLAGS += -Werror
+C_FLAGS += -Wunused-result
+C_FLAGS += -Wno-macro-redefined
 C_FLAGS += -Wno-format-pedantic
 C_FLAGS += -Wno-unused-function
 C_FLAGS += -Wno-unused-label
@@ -48,3 +50,12 @@ $(BUILD_DIR)/%.c.o: $(SOURCE_DIR)/%.c
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
+
+.PHONY: test
+test:
+	$(BUILD_DIR)/$(PKG_EXEC) "param1" "param2" "param3"
+
+
+
+
+

@@ -5,6 +5,13 @@
 
 #include <malloc.h>
 
+#if DEBUG == 1
+#define UNUSED_RESULT __attribute__((unused-result))
+#else /* DEBUG == 1 */
+#define UNUSED_RESULT
+#endif /* DEBUG == 1 */
+
+
 /* config file */
 extern const char *XDG_CONFIG_FILE;
 extern const char *HOME_CONFIG_FILE;

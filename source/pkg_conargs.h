@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "pkg_debug.h"
 #include "pkg_globals.h"
 #include "pkg_log.h"
 

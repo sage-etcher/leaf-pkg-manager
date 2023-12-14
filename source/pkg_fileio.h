@@ -10,6 +10,8 @@
 
 #include <assert.h>
 
+#include "pkg_debug.h"
+
 
 /* functions prototypes */
 char *expand_enviornment_variable (const char *s, int *expanded_flag);

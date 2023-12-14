@@ -7,6 +7,8 @@
 
 #include <assert.h>
 
+#include "pkg_debug.h"
+
 
 /* function prototypes */
 
@@ -55,7 +57,7 @@ expand_enviornment_variable (const char *s, int *expanded_flag)
     {
         *expanded_flag = -1;
         
-        result = malloc ((strlen (s) + 1) * sizeof (char));
+        result = TRACE_MALLOC ((strlen (s) + 1) * sizeof (char));
         assert (result != NULL);
         (void)strcpy (result, s);
 
@@ -72,7 +74,7 @@ expand_enviornment_variable (const char *s, int *expanded_flag)
     {
         *expanded_flag = -1;
         
-        result = malloc ((strlen (s) + 1) * sizeof (char));
+        result = TRACE_MALLOC ((strlen (s) + 1) * sizeof (char));
         assert (result != NULL);
         (void)strcpy (result, s);
 
@@ -81,7 +83,7 @@ expand_enviornment_variable (const char *s, int *expanded_flag)
 
     env_size  = env_end - env_start;
 
-    env_substr = malloc ((env_size + 1) * sizeof (char));
+    env_substr = TRACE_MALLOC ((env_size + 1) * sizeof (char));
     assert (env_substr != NULL);
     (void)strncpy (env_substr, env_start, env_size);
     env_substr[env_size] = '\0';
@@ -101,7 +103,7 @@ expand_enviornment_variable (const char *s, int *expanded_flag)
 
     /* concatenate results into result */
     result_size = pre_size + value_size + post_size;
-    result = malloc ((result_size + 1) * sizeof (char));
+    result = TRACE_MALLOC ((result_size + 1) * sizeof (char));
     assert (result != NULL);
     result_iter = result;
  
@@ -121,7 +123,7 @@ expand_enviornment_variable (const char *s, int *expanded_flag)
     *(result_iter++) = '\0';
 
     /* free the substring from earlier */
-    free (env_substr);
+    TRACE_FREE (env_substr);
 
     /* return that a variable was expanded, and the result */
     *expanded_flag = 0;
@@ -147,12 +149,12 @@ expand_enviornment_variables_iterative (const char *s)
         /* if it succeeds, copy the new value into result */
         if (expanded_env == 0)
         {
-            free (result);
+            TRACE_FREE (result);
             result = overhead;
         }
         else
         {
-            free (overhead);
+            TRACE_FREE (overhead);
         }
     }
 
@@ -194,7 +196,7 @@ file_read_content (const char * restrict filepath)
 
 	/* get size of content */
 	content_size = file_text_size (fp);
-	content = (char * restrict)malloc (content_size);
+	content = (char * restrict)TRACE_MALLOC (content_size);
     assert (content != NULL);
 
 	/* read data from the file into content */

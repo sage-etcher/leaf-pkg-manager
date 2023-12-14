@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "pkg_debug.h"
 #include "pkg_fileio.h"
 #include "pkg_globals.h"
 

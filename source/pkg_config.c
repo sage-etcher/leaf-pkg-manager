@@ -9,6 +9,7 @@
 /* MIT License */
 #include <toml.h>
 
+#include "pkg_debug.h"
 #include "pkg_globals.h"
 #include "pkg_fileio.h"
 #include "pkg_log.h"
@@ -30,7 +31,7 @@ conf_get_file (void)
     {
         return expanded_xdg;
     }
-    free (expanded_xdg);
+    TRACE_FREE (expanded_xdg);
    
 
     /* use the expanded for of XDG_CONFIG_FILE if the file exists */
@@ -39,7 +40,7 @@ conf_get_file (void)
     {
         return expanded_home;
     }
-    free (expanded_home);
+    TRACE_FREE (expanded_home);
     
     /* use the expanded for of XDG_CONFIG_FILE if the file exists */
     expanded_global = expand_enviornment_variables_iterative(GLOBAL_CONFIG_FILE);
@@ -47,7 +48,7 @@ conf_get_file (void)
     {
         return expanded_global;
     }
-    free (expanded_global);
+    TRACE_FREE (expanded_global);
 
 
     /* if no config file exists/is found, return NULL ptr */

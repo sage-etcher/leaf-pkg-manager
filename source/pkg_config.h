@@ -12,6 +12,7 @@
 /* MIT License */
 #include <toml.h>
 
+#include "pkg_debug.h"
 #include "pkg_globals.h"
 #include "pkg_fileio.h"
 #include "pkg_log.h"

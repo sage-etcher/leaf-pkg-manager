@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "pkg_debug.h"
 #include "pkg_globals.h"
 #include "pkg_log.h"
 
@@ -51,7 +52,7 @@ string_array_join (char **list, size_t count, char *seperator)
      * serperator and string in list. We can calculate and allocate the perfect
      * amount of space needed for result */
     result_size = list_acc_size + sep_acc_size;
-    result = malloc ((result_size + 1) * sizeof (char));
+    result = TRACE_MALLOC ((result_size + 1) * sizeof (char));
     assert (result != NULL);
     result_iter = result;
 
@@ -88,7 +89,7 @@ string_array_join (char **list, size_t count, char *seperator)
 
 
 int
-conarg_settings(int argc, char **argv)
+conarg_settings (int argc, char **argv)
 {
     char *arg_ptr;
     char *argv_string;
@@ -97,17 +98,19 @@ conarg_settings(int argc, char **argv)
      * a single string */
     argv_string = string_array_join (argv+1, argc - 1, " ");
 
+    (void)printf ("%s\n", argv_string);
+
     /* Iterate through each character in argv_string */
     arg_ptr = argv_string;
     while (*arg_ptr != '\0')
     {
-        (void)printf ("%p %c\n", arg_ptr, *arg_ptr);
+        /* (void)printf ("%p %c\n", arg_ptr, *arg_ptr); */
 
         /* move to the next character */
         arg_ptr++;
     }
 
-    free (argv_string);
+    TRACE_FREE (argv_string);
 
     return 0;
 }
