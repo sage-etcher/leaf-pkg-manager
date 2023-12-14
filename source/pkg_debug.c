@@ -4,10 +4,13 @@
 #include <malloc.h>
 #include <assert.h>
 
+/* wrapper */
 #ifdef DEBUG_MODE
+
+/* log file to use */
 const char *DEBUG_LOG_FILE = "pkgdebug.log";
 
-
+/* file static variables/constants */ 
 enum {
     DEBUG_ID_MALLOC,
     DEBUG_ID_CALLOC,
@@ -17,150 +20,180 @@ enum {
     DEBUG_ID_FCLOSE
 };
 
+const size_t LOG_TEXT_MAXLEN = 50;
+char g_log_text[LOG_TEXT_MAXLEN];
 
-static void *
-debug_log_to_file (int id, void *ptr, void *ptr_two, size_t x, size_t y, const int line, const char *file)
+
+/* static function prototypes */
+static void log_to_stream (FILE *stream, void *ptr, const char *log_text, const int line_number, const char *source_file);
+static void log_to_file (const char *filename, void *ptr, const char *log_text, const int line_number, const char *source_file);
+static void log_to_stdout (void *ptr, const char *log_text, const int line_number, const char *source_file);
+static void log_cmd (void *ptr, const char *log_text, const int line_number, const char *source_file);
+
+
+/* static functions */ 
+static void
+log_to_stream (FILE *stream, void *ptr, const char *log_text,
+        const int line_number, const char *source_file)
 {
-    FILE *fp = NULL;
-    void *new_ptr = NULL;
+    (void)fprintf (stream, "%p: %s: %s: %d\n",
+            ptr, log_text, source_file, line_number);
+}
 
-    /* do the thing */
-    switch (id)
-    {
-    case DEBUG_ID_MALLOC:
-        new_ptr = malloc (x);
-        break;
-    case DEBUG_ID_CALLOC:
-        new_ptr = calloc (x, y);
-        break;
-    case DEBUG_ID_REALLOC:
-        new_ptr = realloc (ptr, x);
-        break;
-    case DEBUG_ID_FREE:
-        free (ptr);
-        break;
-    case DEBUG_ID_FOPEN:
-        new_ptr = fopen ((const char *)ptr, (const char *)ptr_two);
-        break;
-    case DEBUG_ID_FCLOSE:
-        *(int *)ptr_two = fclose ((FILE *)ptr);
-        break;
-    }
 
-    /* log thing to console */
-    #ifdef DEBUG_INFO_STDOUT
-    switch (id)
-    {
-    case DEBUG_ID_MALLOC:
-        (void)fprintf (stdout, "%p: %d: malloc (%lu): %s: %d\n", 
-                new_ptr, id, x, file, line);
-        break;
-    case DEBUG_ID_CALLOC:
-        (void)fprintf (stdout, "%p: %d: calloc (%lu, %lu): %s: %d\n", 
-                new_ptr, id, x, y, file, line);
-        break;
-    case DEBUG_ID_REALLOC:
-        (void)fprintf (stdout, "%p: %d: realloc (%p, %lu): %s: %d\n", 
-                new_ptr, id, ptr, x, file, line);
-        break;
-    case DEBUG_ID_FREE:
-        (void)fprintf (stdout, "%p: %d: free (%p): %s: %d\n", 
-                ptr, id, ptr, file, line);
-        break;
-    case DEBUG_ID_FOPEN:
-        (void)fprintf (stdout, "%p: %d: fopen (\"%s\", \"%s\"): %s: %d\n", 
-                new_ptr, id, (const char *)ptr, (const char *)ptr_two, file, line);
-        break;
-    case DEBUG_ID_FCLOSE:
-        (void)fprintf (stdout, "%p: %d: fclose (%p): %s: %d\n", 
-                ptr, id, ptr, file, line);
-        break;
-    }
-    #endif /* def DEBUG_INFO_STDOUT */
-
-    /* log thing to file */
+static void
+log_to_file (const char *filename, void *ptr, const char *log_text,
+        const int line_number, const char *source_file)
+{
     #ifdef DEBUG_INFO_LOGFILE
-    fp = fopen (DEBUG_LOG_FILE, "a+");
 
-    if (fp != NULL)
+    FILE *fp;
+
+    /* try to open the file */
+    fp = fopen (filename, "a+");
+    if (fp == NULL)
     {
-        switch (id)
-        {
-        case DEBUG_ID_MALLOC:
-            (void)fprintf (fp, "%p: %d: malloc (%lu): %s: %d\n", 
-                    new_ptr, id, x, file, line);
-            break;
-        case DEBUG_ID_CALLOC:
-            (void)fprintf (fp, "%p: %d: calloc (%lu, %lu): %s: %d\n", 
-                    new_ptr, id, x, y, file, line);
-            break;
-        case DEBUG_ID_REALLOC:
-            (void)fprintf (fp, "%p: %d: realloc (%p, %lu): %s: %d\n", 
-                    new_ptr, id, ptr, x, file, line);
-            break;
-        case DEBUG_ID_FREE:
-            (void)fprintf (fp, "%p: %d: free (%p): %s: %d\n", 
-                    ptr, id, ptr, file, line);
-            break;
-        case DEBUG_ID_FOPEN:
-            (void)fprintf (fp, "%p: %d: fopen (\"%s\", \"%s\"): %s: %d\n", 
-                    new_ptr, id, (const char *)ptr, (const char *)ptr_two, file, line);
-            break;
-        case DEBUG_ID_FCLOSE:
-            (void)fprintf (fp, "%p: %d: fclose (%p): %s: %d\n", 
-                    ptr, id, ptr, file, line);
-            break;
-        }
-
-        fclose (fp);
+        /* if the file cannot be opened, throw a warning to stderr */
+        (void)fprintf (stderr, "DEBUG WARNING: couldn't open the debug log_cmd file\n");
+        return;
     }
-    #endif /* def DEBUG_INFO_LOGFILE */
 
-    /* return the new ptr */
+    /* otherwise, if the file was opened, log_cmd to it */
+    log_to_stream (fp, ptr, log_text, line_number, source_file);
+   
+    #endif /* ifdef DEBUG_INFO_LOGFILE */
+}
+
+
+static void
+log_to_stdout (void *ptr, const char *log_text, const int line_number,
+        const char *source_file)
+{
+    #ifdef DEBUG_INFO_STDOUT
+
+    log_to_stream (stdout, ptr, log_text, line_number, source_file);
+
+    #endif /* ifdef DEBUG_INFO_STDOUT */
+}
+
+
+static void
+log_cmd (void *ptr, const char *log_text, const int line_number,
+        const char *source_file)
+{
+    log_to_stdout (ptr, log_text, line_number, source_file);
+    log_to_file (DEBUG_LOG_FILE, ptr, log_text, line_number, source_file);
+}
+
+
+/* gloabl functions */
+void *
+debug_malloc (size_t bytes, const int line_number, const char *source_file)
+{
+    void *new_ptr;
+
+    /* reallocate the ptr */
+    new_ptr = malloc (bytes);
+
+    /* log the operation */
+    (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: malloc (%lu)", 
+                    DEBUG_ID_MALLOC, bytes);
+    log_cmd (new_ptr, g_log_text, line_number, source_file);
+
+    /* return the new pointer */
     return new_ptr;
 }
 
+
 void *
-debug_log_malloc (size_t size, const int line, const char *file)
+debug_calloc (size_t bytes, size_t count,
+        const int line_number, const char *source_file)
 {
-    return debug_log_to_file (DEBUG_ID_MALLOC, NULL, NULL, size, 0, line, file);
+    void *new_ptr;
+
+    /* reallocate the ptr */
+    new_ptr = calloc (bytes, count);
+
+    /* log the operation */
+    (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: calloc (%lu, %lu)", 
+                    DEBUG_ID_CALLOC, bytes, count);
+    log_cmd (new_ptr, g_log_text, line_number, source_file);
+
+    /* return the new pointer */
+    return new_ptr;
 }
 
 
 void *
-debug_log_calloc (size_t size, size_t num, const int line, const char *file)
+debug_realloc (void *ptr, size_t bytes, const int line_number, 
+        const char *source_file)
 {
-    return debug_log_to_file (DEBUG_ID_CALLOC, NULL, NULL, size, num, line, file);
-}
+    void *new_ptr;
 
+    /* reallocate the ptr */
+    new_ptr = realloc (ptr, bytes);
 
-void *
-debug_log_realloc (void *ptr, size_t size, const int line, const char *file)
-{
-    return debug_log_to_file (DEBUG_ID_REALLOC, ptr, NULL, size, 0, line, file);
+    /* log the operation */
+    (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: realloc (%p, %lu)", 
+                    DEBUG_ID_REALLOC, ptr, bytes);
+    log_cmd (new_ptr, g_log_text, line_number, source_file);
+
+    /* return the new pointer */
+    return new_ptr;
 }
 
 
 void
-debug_log_free (void *ptr, const int line, const char *file)
+debug_free (void *ptr, const int line_number, const char *source_file)
 {
-    (void)debug_log_to_file (DEBUG_ID_FREE, ptr, NULL, 0, 0, line, file);
+    /* free the ptr */
+    free (ptr);
+
+    /* log_cmd the operation */
+    (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: free (%p)", 
+                    DEBUG_ID_FREE, ptr);
+    log_cmd (ptr, g_log_text, line_number, source_file);
+
     return;
 }
 
 
 FILE *
-debug_log_fopen (const char *filename, const char *open_type, const int line, const char *file)
+debug_fopen (const char *filename, const char *access_specifier
+        const int line_number, const char *source_file)
 {
-    return debug_log_to_file (DEBUG_ID_FOPEN, (char *)filename, (char *)open_type, 0, 0, line, file);
+    FILE *open_file;
+
+    /* reallocate the ptr */
+    new_ptr = fopen (filename, access_specifier);
+
+    /* log the operation */
+    (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: fopen (\"%s\", \"%s\")",
+                    DEBUG_ID_FOPEN, filename, access_specifier);
+    log_cmd (open_file, g_log_text, line_number, source_file);
+
+    /* return the new pointer */
+    return new_ptr;
 }
 
 
 int
-debug_log_fclose (FILE *fp, const int line, const char *file)
+debug_fclose (FILE *fp, const int line_number, const char *source_file)
 {
     int return_value;
-    (void)debug_log_to_file (DEBUG_ID_FCLOSE, fp, &return_value, 0, 0, line, file);
+
+    /* reallocate the ptr */
+    return_value = fclose (fp);
+
+    /* log the operation */
+    (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: fclose (%p)",
+                    DEBUG_ID_FCLOSE, fp);
+    log_cmd (fp, g_log_text, line_number, source_file);
+
+    /* return the new pointer */
     return return_value;
 }
+
+
+/* end of DEBUG_MODE wrapper */
 #endif /* def DEBUG_MODE */

@@ -9,45 +9,52 @@
 /* make sure that function return types are handled */
 #define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 
+
 /* enable/disable debug mode */
 #undef DEBUG_MODE
-#undef DEBUG_INFO_STDOUT
-#undef DEBUG_INFO_LOGFILE
 
-extern const char *debug_log_file;
-
-#ifdef DEBUG_MODE
-/* log dynamic allocations and frees (to better find memory leaks */
-#define TRACE_MALLOC(s) (debug_log_malloc (s, __LINE__, __FILE__))
-#define TRACE_CALLOC(t,s) (debug_log_calloc (t, s, __LINE__, __FILE__))
-#define TRACE_REALLOC(p,s) (debug_log_realloc (p, s, __LINE__, __FILE__))
-#define TRACE_FREE(p) (debug_log_free (p, __LINE__, __FILE__))
-#define TRACE_FOPEN(f,t) (debug_log_fopen (f, t, __LINE__, __FILE__))
-#define TRACE_FCLOSE(p) (debug_log_fclose (p, __LINE__, __FILE__))
-
-#endif /* def DEBUG_MODE */
-
+/* use basic fucntions if not in debug mode */
 #ifndef DEBUG_MODE
-#define TRACE_MALLOC(s) (malloc (s))
-#define TRACE_CALLOC(t,s) (calloc (t, s))
-#define TRACE_REALLOC(p,s) (realloc (p, s))
-#define TRACE_FREE(p) (free (p))
-#define TRACE_FOPEN(f,t) (fopen (f, t))
-#define TRACE_FCLOSE(p) (fclose (p))
+#define TRACE_MALLOC(size)       (malloc  (size))
+#define TRACE_CALLOC(size,count) (calloc  (size, count))
+#define TRACE_REALLOC(ptr,size)  (realloc (ptr,  size))
+#define TRACE_FREE(ptr)          (free    (ptr))
+#define TRACE_FOPEN(name,access) (fopen   (name, access))
+#define TRACE_FCLOSE(file)       (fclose  (file))
+
 #endif /* ndef DEBUG_MODE */
 
 
-/* debug logging functions */
+/* use custom functions if in debug mode */
 #ifdef DEBUG_MODE
 
-void *debug_log_malloc (size_t size, const int line, const char *file);
-void *debug_log_calloc (size_t size, size_t num, const int line, const char *file);
-void *debug_log_realloc (void *ptr, size_t size, const int line, const char *file);
-void debug_log_free (void *ptr, const int line, const char *file);
-FILE *debug_log_fopen (const char *filename, const char *open_type, const int line, const char *file);
-int debug_log_fclose (FILE *fp, const int line, const char *file);
+/* where to log information to */
+#undef DEBUG_LOG_TO_STDOUT
+#undef DEBUG_LOG_TO_LOGFILE
+
+extern const char *debug_log_file;
+
+/* log dynamic allocations and frees (to better find memory leaks */
+#define TRACE_MALLOC(size)       (debug_malloc  (size,         __LINE__, __FILE__))
+#define TRACE_CALLOC(size,count) (debug_calloc  (size, count,  __LINE__, __FILE__))
+#define TRACE_REALLOC(ptr,size)  (debug_realloc (ptr,  size,   __LINE__, __FILE__))
+#define TRACE_FREE(ptr)          (debug_free    (ptr,          __LINE__, __FILE__))
+#define TRACE_FOPEN(name,access) (debug_fopen   (name, access, __LINE__, __FILE__))
+#define TRACE_FCLOSE(file)       (debug_fclose  (file,         __LINE__, __FILE__))
+
+
+/* debug logging functions */
+void *debug_malloc  (size_t bytes, const int line_number, const char *source_file);
+void *debug_calloc  (size_t bytes, size_t count, const int line_number, const char *source_file);
+void *debug_realloc (void *ptr, size_t bytes, const int line_number, const char *source_file);
+void  debug_free    (void *ptr, const int line_number, const char *source_file);
+FILE *debug_fopen   (const char *filename, const char *access_specifier, const int line_number, const char *source_file);
+int   debug_fclose  (FILE *fp, const int line_number, const char *source_file);
+
 
 #endif /* def DEBUG_MOD */
 
 #endif /* run once */
 
+
+/* end of file */
