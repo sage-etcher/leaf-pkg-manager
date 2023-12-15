@@ -25,6 +25,15 @@ char *g_config_install_prefix;
 char *g_config_extract_path;
 char *g_config_log_file;
 
+/* console parameter variables/flags */
+mode   g_run_mode                = MODE_LIST; 
+int    g_console_config_flag     = 0; 
+char  *g_console_config_filename = NULL;
+int    g_verbose_flag            = 0; 
+int    g_help_flag               = 0; 
+int    g_version_flag            = 0; 
+char **g_arguments               = NULL;
+size_t g_arguments_len           = 0;
 
 /* function prototypes */
 static void free_config (void);

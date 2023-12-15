@@ -33,6 +33,26 @@ extern char *g_config_install_prefix;
 extern char *g_config_extract_path;
 extern char *g_config_log_file;
 
+/* console parameter variables/flags */
+typedef enum {
+    MODE_INSTALL,
+    MODE_UNINSTALL,
+    MODE_CREATE,
+    MODE_DELETE,
+    MODE_ALIAS,
+    MODE_REMOVE_ALIAS,
+    MODE_LIST
+} mode;
+
+extern mode   g_run_mode; 
+extern int    g_console_config_flag; 
+extern char  *g_console_config_filename;
+extern int    g_verbose_flag; 
+extern int    g_help_flag; 
+extern int    g_version_flag; 
+extern char **g_arguments;
+extern size_t g_arguments_len;
+
 
 /* function prototypes */
 void global_cleanup (void);

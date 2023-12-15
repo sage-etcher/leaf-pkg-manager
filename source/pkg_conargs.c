@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <getopt.h>
+
 #include "pkg_debug.h"
 #include "pkg_globals.h"
 #include "pkg_log.h"
@@ -21,6 +23,8 @@ conarg_hello (void)
 }
 
 
+#if defined(IGNORE)
+/* move into a string utilities file */
 static char *
 string_array_join (char **list, size_t count, char *seperator)
 {
@@ -88,25 +92,6 @@ string_array_join (char **list, size_t count, char *seperator)
 }
 
 
-static int
-is_whitespace_char (char c)
-{
-
-    /* return 0 if the character is whitespace */
-    switch (c)
-    {
-    case ' ':
-    case '\t':
-    case '\n':
-    case '\r':
-        return 0;
-    }
-
-    /* return 1 in all other cases */
-    return 1;
-}
-
-
 static char *
 trim_whitespace (const char *source_str)
 {
@@ -139,73 +124,118 @@ trim_whitespace (const char *source_str)
     /* return the trimmed string */
     return trimmed_string;
 }
-
-
-/* returns the new index, index stays the same if no matches are found */
-static int
-get_long_commands (char **list, int index, int count)
-{
-    const char LONG_PREFIX[] = "--";
-    char *arg= trim_whitespace (list[index]);
-
-    /* all long commands start with the LONG_PREFIX (normally "--"), if the
-     * given string doesn't, then we know that it is not a long command. */
-    if (strncmp (arg, LONG_PREFIX, sizeof (LONG_PREFIX)) == 0)
-    {
-        goto get_long_commands_exit_0;
-    }
-
-    /* run through a large if-else chain to find out if we have a match. :/ */
-
-
-
-get_long_commands_exit_0:
-    TRACE_FREE (arg);
-    return index;
-}
-
-
-static int
-get_short_commands (char **list, unsigned index, unsigned count)
-{
-
-    return 0;
-}
-
-
-static void
-get_packages (char **list, unsigned index, unsigned count)
-{
-    
-    return;
-}
+/* end move */
+#endif /* defined(IGNORE) */
 
 
 void
 conarg_settings (int argc, char **argv)
 {
-    int i, overhead;
-
-    i = 1; /* start at the first arguement */
-    for (; i < argc; i++)
+    int c;
+    int option_index;
+    const struct option long_options[] =
     {
-        /* check if the arguement matches one of the long commands */
-        overhead = get_long_commands (argv, i, argc);
-        if (overhead != i)
+        /* name,           arg?,               flag*,  return */
+        { "install",       no_argument,        0,      'S' },
+        { "uninstall",     no_argument,        0,      's' },
+        { "create",        no_argument,        0,      'C' },
+        { "delete",        no_argument,        0,      'c' },
+        { "alias",         no_argument,        0,      'A' },
+        { "remove-alias",  no_argument,        0,      'a' },
+        { "list",          no_argument,        0,      'l' },
+        { "use-config",    required_argument,  0,      't' },
+        { "verbose",       no_argument,        0,      'v' },
+        { "brief",         no_argument,        0,      'b' },
+        { "help",          no_argument,        0,      'h' },
+        { "version",       no_argument,        0,      'V' },
+        { 0, 0, 0, 0 }
+    };
+
+
+    /* get command list */
+    while (1)
+    {
+        /* reset the option index */
+        option_index = 0;
+    
+        /* get command */
+        c = getopt_long (argc, argv, "SsCcAalt:vbhV",
+                         long_options, &option_index);
+      
+        /* if there are no more options, stop looping */
+        if (c == -1)
         {
-            i = overhead;
-            continue;
+            break;
         }
 
-        /* check if the arguement matches any unix style commands */
-        if (get_short_commands (argv, i, argc) == 0)
-            continue;
+        /* switch statement for different options */
+        switch (c)
+        {
+            case 0: /* flag already set */
+                break;
 
-        /* if neither short or long command, assume the rest of the arguements
-         * to be package names */ 
-        get_packages (argv, i, argc);
-        break;
+            case 'S': /* install */
+                g_run_mode = MODE_INSTALL;
+                break;
+
+            case 's': /* uninstall */
+                g_run_mode = MODE_UNINSTALL;
+                break;
+
+            case 'C': /* create */
+                g_run_mode = MODE_CREATE;
+                break;
+
+            case 'c': /* delete */
+                g_run_mode = MODE_DELETE;
+                break;
+
+            case 'A': /* alias */
+                g_run_mode = MODE_ALIAS;
+                break;
+
+            case 'a': /* remove-alias */
+                g_run_mode = MODE_REMOVE_ALIAS;
+                break;
+
+            case 'l': /* list */
+                g_run_mode = MODE_LIST;
+                break;
+
+            case 't': /* use-config */
+                g_console_config_flag = 1;
+                g_console_config_filename = optarg;
+                break;
+
+            case 'v': /* verbose */
+                g_verbose_flag = 1;
+                break;
+
+            case 'b': /* brief */
+                g_verbose_flag = 0;
+                break;
+
+            case 'h': /* help */
+                g_help_flag = 1;
+                break;
+
+            case 'V': /* version */
+                g_version_flag = 1;
+                break;
+
+            case '?': /* unrecognized command */
+                /* getopt_long already threw an error message */
+                break;
+
+            default: /* AHHHHH */
+                abort ();
+        }
     }
+
+    /* copy (by reference) extra arguements */
+    g_arguments_len = argc - optind;
+    g_arguments = argv + optind;
+
 }
 
 
