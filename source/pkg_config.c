@@ -23,7 +23,18 @@ static char *get_toml_string (toml_table_t *table, const char *key);
 const char *
 conf_get_file (void)
 {
-    char *expanded_xdg, *expanded_home, *expanded_global;
+    char *expanded_xdg, *expanded_home, *expanded_global, *expanded_custom;
+
+    /* if the user gave a custom config file on command line, use it */
+    if (g_console_config_flag == 1)
+    {
+        expanded_custom = expand_enviornment_variables_iterative(g_console_config_filename);
+        if (file_exists (expanded_custom))
+        {
+            return expanded_custom;
+        }
+        TRACE_FREE (expanded_custom);
+    }
 
     /* use the expanded for of XDG_CONFIG_FILE if the file exists */
     expanded_xdg = expand_enviornment_variables_iterative(XDG_CONFIG_FILE);
