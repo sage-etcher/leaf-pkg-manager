@@ -1,52 +1,59 @@
-# Leaf Package Manager
+# Leaf Package Manager (WIP)
 
 A very basic package manager for UNIX-like operating systems.
 Designed for use with LFS systems.
 
-## Install
-```
-$ git clone https://github.com/sage-etcher/leaf-pkg-manager.git
-# cp ./leaf-pkg-manager/source/* /usr/bin/
-```
+## Config File
 
-## Using the Package Manager
+| priority | file |
+|:-------- |:---- |
+| 1        | file passed with `-t` or `--use-config` arguement |
+| 2        | `$XDG_CONFIG_HOME/pkg/config.toml` |
+| 3        | `$HOME/.pkg.toml` |
+| 4        | `/etc/pkg/config.toml` |
 
-### Creating a package
 
-Building the program into a package is generally to be done as one of the ladder steps when installing a program from source.
-The program must first be installed into a fake-root directoy, if available, DESTDIR will suffice.
-Please note that `pkg_create` does NOT install the package, that is a separate command `pkg_install`.
+### Example config file
 
-```
-pkg_create [package-name] [fakeroot-directory]
-```
-
-An example program (zlib) install with the package manager may look something like this. A mostly standard install w/ the main changes being, installing the program to a fake-root directory, then using `pkg_create` and `pkg_install`.
+A general basic config file may look like this
 
 ```
-$ ./configure --prefix=/usr
-$ make
-$ make check
-$ mkdir -pv fakeroot
-$ make DESTDIR=./fakeroot install
-# pkg_create zlib-1.2.13 ./fakeroot
-# pkg_install zlib-1.2.13
+[general]
+
+# package database, contains list of installed packages and package information
+database_file = "/usr/share/pkg/packages.db"
+
+# directory to store local packages
+local_package_path = "/usr/share/pkg/local"
+
+# prefix for installing packages (DESTDIR)
+install_prefix = "/"
+
+# temporary location used when installing a package
+extract_path = "/tmp/pkg_extract"
+
+# logs errors, installs, creates, aliases, etc. 
+log_file = "/var/log/pkg.log"
 ```
 
-### Installing a package
+## Console Arguments
 
-```
-# pkg_install [package-name]
-```
+| argument | param |
+|:-------- |:----- |
+| `-S` or `--install` | install package to system |
+| `-s` or `--uninstall` | unintall package from system |
+| `-C` or `--create` | create a package |
+| `-c` or `--delete` | permanently delete a package from the system |
+| `-A` or `--alias` | create an alias (symbolic link) for a package |
+| `-a` or `--remove-alias` | remove a package alias |
+| `-l` or `--list` | list all packages that you have access to |
+| `-t` or `--use-config` | specify an alternate config file to use |
+| `-v` or `--verbose` | be verbose, log more information to stdout |
+| `-b` or `--brief` | dont be verbose, just shut up and do stuff |
+| `-h` or `--help` | print help message |
+| `-V` or `--version` | print versioning information |
 
-### Uninstalling a pacakge
+## License
 
-```
-# pkg_remove [package-name]
-```
+need to add the license still :/
 
-## Other info
-
-By default package archives are saved at `/usr/pkg/archive/`, these files contain everything necessary to install the program. The package manager also creates a "trace" file at `/usr/pkg/traces/`, these files contain all the necessary information to remove a package.
-
-Folder locations can be configured through the `pkg_init` file.
