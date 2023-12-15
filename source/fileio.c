@@ -1,4 +1,4 @@
-#include "pkg_fileio.h"
+#include "fileio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 
 #include <assert.h>
 
-#include "pkg_debug.h"
+#include "debug.h"
 
 
 /* function prototypes */

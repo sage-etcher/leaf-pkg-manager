@@ -10,7 +10,7 @@
 
 #include <assert.h>
 
-#include "pkg_debug.h"
+#include "debug.h"
 
 
 /* functions prototypes */

@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-#include "pkg_debug.h"
-#include "pkg_globals.h"
-#include "pkg_config.h"
+#include "debug.h"
+#include "globals.h"
+#include "config.h"
 
 #endif /* run once */

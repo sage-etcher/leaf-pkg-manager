@@ -1,8 +1,8 @@
-#include "pkg_globals.h"
+#include "globals.h"
 
 #include <malloc.h>
 
-#include "pkg_debug.h"
+#include "debug.h"
 
 /* config file locations */
 const char *XDG_CONFIG_FILE    = "${XDG_CONFIG_HOME}/pkg/config.toml";

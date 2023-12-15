@@ -1,4 +1,4 @@
-#include "pkg_config.h"
+#include "config.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,10 +9,10 @@
 /* MIT License */
 #include <toml.h>
 
-#include "pkg_debug.h"
-#include "pkg_globals.h"
-#include "pkg_fileio.h"
-#include "pkg_log.h"
+#include "debug.h"
+#include "globals.h"
+#include "fileio.h"
+#include "log.h"
 
 
 /* function prototypes */

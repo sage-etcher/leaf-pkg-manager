@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "pkg_debug.h"
-#include "pkg_globals.h"
-#include "pkg_log.h"
+#include "debug.h"
+#include "globals.h"
+#include "log.h"
 
 
 /* function prototypes */

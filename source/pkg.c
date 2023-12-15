@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-#include "pkg_debug.h"
-#include "pkg_globals.h"
-#include "pkg_conargs.h"
-#include "pkg_config.h"
+#include "debug.h"
+#include "globals.h"
+#include "conargs.h"
+#include "config.h"
 
 
 /* static-function prototypes */

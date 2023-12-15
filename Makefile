@@ -6,7 +6,7 @@ PREFIX := /usr/local
 BIN_DIR := $(DESTDIR)/$(PREFIX)/bin
 
 PKG_EXEC := pkg
-PKG_FILENAMES := pkg_debug.c pkg_globals.c pkg_fileio.c pkg_log.c pkg_conargs.c pkg_config.c pkg.c
+PKG_FILENAMES := debug.c globals.c fileio.c log.c conargs.c config.c pkg.c
 PKG_SOURCE_FILES := $(foreach filename,$(PKG_FILENAMES),$(SOURCE_DIR)/$(filename))
 PKG_OBJECT_FILES := $(foreach filename,$(PKG_FILENAMES),$(BUILD_DIR)/$(filename).o)
 
