@@ -43,10 +43,11 @@
 /* MIT License */
 #include <toml.h>
 
-#include "debug.h"
 #include "globals.h"
 #include "fileio.h"
 #include "log.h"
+
+#include "debug.h"
 
 
 /* get the most relevent config file */

@@ -38,14 +38,14 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <assert.h>
 
 #include "debug.h"
+#include <assert.h>
 
 
 /* function prototypes */
-char *string_array_join (char **list, size_t count, char *seperator);
-char *trim_whitespace   (const char *source_str);
+char *string_array_join (char **list, size_t count, char *seperator) WARN_UNUSED_RESULT;
+char *trim_whitespace   (const char *source_str) WARN_UNUSED_RESULT;
 
 
 #endif /* run once */

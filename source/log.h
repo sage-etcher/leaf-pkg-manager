@@ -37,9 +37,10 @@
 
 #include <stdio.h>
 
-#include "debug.h"
 #include "fileio.h"
 #include "globals.h"
+
+#include "debug.h"
 
 
 /* function prototypes */

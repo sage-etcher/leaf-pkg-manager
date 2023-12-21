@@ -38,13 +38,15 @@
 #include <stdio.h>
 #include <malloc.h>
 
+#include <assert.h>
+
+
 /* make sure that function return types are handled */
 #define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 
 
 /* enable/disable debug mode */
 #undef DEBUG_MODE
-
 
 /* use basic fucntions if not in debug mode */
 #if !defined(DEBUG_MODE)

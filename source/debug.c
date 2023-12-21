@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <malloc.h>
+
 #include <assert.h>
 
 
@@ -138,6 +139,7 @@ debug_malloc (size_t bytes, const int line_number, const char *source_file)
 
     /* reallocate the ptr */
     new_ptr = malloc (bytes);
+    assert (new_ptr != NULL);
 
     /* log the operation */
     (void)snprintf (g_log_text, LOG_TEXT_MAXLEN, "%d: malloc (%lu)", 
