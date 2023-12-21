@@ -85,6 +85,14 @@ extern int    g_version_flag;
 extern char **g_arguments;
 extern size_t g_arguments_len;
 
+/* error logging strings + typedef */
+typedef const char * err_msg;
+
+extern err_msg WARNING_CANNOT_LOG_TO_FILE;
+extern err_msg ERROR_NO_CONFIG_FILE;
+extern err_msg ERROR_PARSING_TOML;
+
+
 
 /* function prototypes */
 void global_cleanup (void);

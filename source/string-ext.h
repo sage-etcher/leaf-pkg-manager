@@ -1,8 +1,8 @@
 /* 
  * This source file is a part of the Leaf Package Manager.
  *
- * /source/log.c
- * Contains functions and constants needed for logging.
+ * /source/string-ext.h
+ * Contains prototypes and includes for code defined in '/source/string-ext.c'.
  *
  */
 
@@ -30,51 +30,22 @@
  */
 
 
-#include "log.h"
+/* run once */
+#pragma once
+#ifndef __PKG_STRING_EXTENSION_HEADER__
+#define __PKG_STRING_EXTENSION_HEADER__
 
-#include <stdio.h>
+
+#include <ctype.h>
+#include <string.h>
+#include <assert.h>
 
 #include "debug.h"
-#include "fileio.h"
-#include "globals.h"
 
 
-/* static function prototypes */
+/* function prototypes */
+char *string_array_join (char **list, size_t count, char *seperator);
+char *trim_whitespace   (const char *source_str);
 
 
-/* functions */
-int
-log_to_file (const char *log_file, const char *msg)
-{
-    int exit_code;
-    exit_code = file_append (log_file, msg);
-
-    if (exit_code != 0)
-    {
-        log_to_term (stderr, WARNING_CANNOT_LOG_TO_FILE);
-    }
-
-    return exit_code;
-}
-
-
-void
-log_to_term (FILE *stream, const char *msg)
-{
-    (void)fprintf (stream, "%s", msg);
-
-    return;
-}
-
-
-void
-log_message (const char *msg)
-{
-    (void)log_to_file (g_config_log_file, msg);
-    log_to_term (stderr, msg);
-
-    return;
-}
-
-
-/* end of file */
+#endif /* run once */

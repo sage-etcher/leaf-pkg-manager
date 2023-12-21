@@ -35,12 +35,11 @@
 #ifndef __PKG_HEADER__
 #define __PKG_HEADER__
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
-#include "debug.h"
-#include "globals.h"
+#include "conargs.h"
 #include "config.h"
+#include "globals.h"
+
 
 #endif /* run once */

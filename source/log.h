@@ -42,14 +42,6 @@
 #include "globals.h"
 
 
-/* globals */
-typedef const char * err_msg;
-
-extern err_msg WARNING_CANNOT_LOG_TO_FILE;
-extern err_msg ERROR_NO_CONFIG_FILE;
-extern err_msg ERROR_PARSING_TOML;
-
-
 /* function prototypes */
 int  log_to_file (const char *log_file, const char *msg) WARN_UNUSED_RESULT;
 void log_to_term (FILE *stream, const char *msg);

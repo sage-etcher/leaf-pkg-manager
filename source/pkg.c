@@ -32,14 +32,11 @@
 
 #include "pkg.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
-#include "debug.h"
-#include "globals.h"
 #include "conargs.h"
 #include "config.h"
+#include "globals.h"
 
 
 /* static-function prototypes */
