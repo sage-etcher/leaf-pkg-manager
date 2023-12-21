@@ -69,6 +69,25 @@ typedef enum {
     MODE_REMOVE_ALIAS,
     MODE_LIST
 } mode;
+/* mode required arguments */
+#define ARGC_MIN_INSTALL   1
+#define ARGC_MIN_UNINSTALL 1
+#define ARGC_ABS_CREATE    2
+#define ARGC_MIN_DELETE    1
+#define ARGC_ABS_ALIAS     2
+#define ARGC_MIN_RMALIAS   1
+#define ARGC_MIN_LIST      0
+#define ARGC_MAX_LIST      1
+/* mode parameter indexing constants */
+#define CREATE_PKGNAME_INDEX 0
+#define CREATE_FAKEROOT_INDEX 1
+#define ALIAS_SRC_INDEX 0
+#define ALIAS_DST_INDEX 1
+#define LIST_SRCH_INDEX 0
+extern const char *LIST_DEFAULT_SEARCH_STRING;
+
+
+
 
 extern mode   g_run_mode; 
 extern int    g_console_config_flag; 

@@ -38,7 +38,8 @@ PREFIX := /usr/local
 BIN_DIR := $(DESTDIR)/$(PREFIX)/bin
 
 PKG_EXEC := pkg
-PKG_FILENAMES := debug.c globals.c fileio.c log.c conargs.c config.c pkg.c
+PKG_FILENAMES := debug.c globals.c string-ext.c fileio.c log.c conargs.c \
+				 config.c instruction.c pkg.c
 PKG_SOURCE_FILES := $(foreach filename,$(PKG_FILENAMES),$(SOURCE_DIR)/$(filename))
 PKG_OBJECT_FILES := $(foreach filename,$(PKG_FILENAMES),$(BUILD_DIR)/$(filename).o)
 

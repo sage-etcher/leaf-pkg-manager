@@ -1,8 +1,8 @@
 /* 
  * This source file is a part of the Leaf Package Manager.
  *
- * /source/pkg.c
- * The main entry point of the program.
+ * /source/instruction.h
+ * Contains prototypes and includes for code defined in '/source/instruction.c'.
  *
  */
 
@@ -30,31 +30,24 @@
  */
 
 
-#include "pkg.h"
+/* run once */
+#pragma once
+#ifndef __PKG_INSTRUCTION_HEADER__
+#define __PKG_INSTRUCTION_HEADER__
 
-#include <stdlib.h>
 
-#include "conargs.h"
-#include "config.h"
-#include "instruction.h"
 #include "globals.h"
-/* static-function prototypes */
+#include "log.h"
 
-/* main entry point */
-int
-main (int argc, char **argv)
-{
-    conarg_settings (argc, argv);   /* get console parameters */
-    conf_source ();                 /* source the config file */
-
-    inst_execute (g_run_mode);      /* do the stuff indicated by the mode */
-
-    /* free allocated global variables and tidy up a bit */
-    global_cleanup();
-    /* exit */
-    return EXIT_SUCCESS;
-}
+#include "debug.h"
+#include <assert.h>
 
 
-/* functions */
+/* function prototypes */
+void inst_execute (int mode);
 
+
+#endif /* run once */
+
+
+/* end of file */
