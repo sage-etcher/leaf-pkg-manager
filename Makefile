@@ -39,7 +39,9 @@ BIN_DIR := $(DESTDIR)/$(PREFIX)/bin
 
 PKG_EXEC := pkg
 PKG_FILENAMES := debug.c globals.c string-ext.c fileio.c log.c conargs.c \
-				 config.c instruction.c pkg.c
+				 config.c mode-alias.c mode-create.c mode-delete.c \
+				 mode-install.c mode-list.c mode-remove-alias.c \
+				 mode-uninstall.c instruction.c pkg.c
 PKG_SOURCE_FILES := $(foreach filename,$(PKG_FILENAMES),$(SOURCE_DIR)/$(filename))
 PKG_OBJECT_FILES := $(foreach filename,$(PKG_FILENAMES),$(BUILD_DIR)/$(filename).o)
 
@@ -85,9 +87,10 @@ $(BUILD_DIR)/%.c.o: $(SOURCE_DIR)/%.c
 clean:
 	rm -rf $(BUILD_DIR)
 
+
 .PHONY: test
 test:
-	$(BUILD_DIR)/$(PKG_EXEC) "param1" "param2" "param3"
+	$(BUILD_DIR)/$(PKG_EXEC) "test" "test" "param3"
 
 
 

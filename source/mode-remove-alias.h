@@ -1,8 +1,8 @@
 /* 
  * This source file is a part of the Leaf Package Manager.
  *
- * /source/conargs.h
- * Contains prototypes and includes for code defined in '/source/conargs.c'.
+ * /source/mode-remove-alias.h
+ * Contains prototypes and includes for code defined in '/source/mode-remove-alias.c'.
  *
  */
 
@@ -32,17 +32,15 @@
 
 /* run once */
 #pragma once
-#ifndef __PKG_CONARGS_HEADER__
-#define __PKG_CONARGS_HEADER__
+#ifndef __PKG_MODE_RMALIAS_HEADER__
+#define __PKG_MODE_RMALIAS_HEADER__
 
-#include <stdlib.h>
-#include <getopt.h>
 
 #include "globals.h"
 
 
 /* function prototypes */
-void conarg_settings (int argc, char **argv);
+int remove_alias (char *package_name);
 
 
 #endif /* run once */

@@ -105,6 +105,10 @@ extern err_msg WARNING_CANNOT_LOG_TO_FILE;
 extern err_msg ERROR_NO_CONFIG_FILE;
 extern err_msg ERROR_PARSING_TOML;
 
+extern const char *CONFIRM_INSTALL;
+extern const char *CONFIRM_UNINSTALL;
+extern const char *CONFIRM_DELETE;
+extern const char *CONFIRM_RMALIAS;
 
 
 /* function prototypes */

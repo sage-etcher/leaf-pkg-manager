@@ -1,8 +1,8 @@
 /* 
  * This source file is a part of the Leaf Package Manager.
  *
- * /source/conargs.h
- * Contains prototypes and includes for code defined in '/source/conargs.c'.
+ * /source/mode-install.h
+ * Contains prototypes and includes for code defined in '/source/mode-install.c'.
  *
  */
 
@@ -32,17 +32,15 @@
 
 /* run once */
 #pragma once
-#ifndef __PKG_CONARGS_HEADER__
-#define __PKG_CONARGS_HEADER__
+#ifndef __PKG_MODE_INSTALL_HEADER__
+#define __PKG_MODE_INSTALL_HEADER__
 
-#include <stdlib.h>
-#include <getopt.h>
 
 #include "globals.h"
 
 
 /* function prototypes */
-void conarg_settings (int argc, char **argv);
+int install_package (char *package_name);
 
 
 #endif /* run once */

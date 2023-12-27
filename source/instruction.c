@@ -37,7 +37,6 @@
 #include "globals.h"
 #include "log.h"
 
-/*
 #include "mode-list.h"
 #include "mode-alias.h"
 #include "mode-create.h"
@@ -45,13 +44,13 @@
 #include "mode-install.h"
 #include "mode-uninstall.h"
 #include "mode-remove-alias.h"
- */
 
 #include "debug.h"
 #include <assert.h>
 
 
 /* static-function prototypes */
+static int get_confirmation (const char *base_prompt, char *details);
 static void list_wrapper (void);
 static void alias_wrapper (void);
 static void create_wrapper (void);
@@ -372,6 +371,26 @@ list_wrapper (void)
     list_packages (search_string);
 
     return;
+}
+
+
+static int
+get_confirmation (const char *base_prompt, char *details)
+{
+    char user_input, lower;
+
+    /* print the prompt */
+    printf ("%s (%s)\nContinue [Y/n]? ", base_prompt, details);
+
+    /* get a character from the user */
+    scanf("%1c", &user_input);
+   
+    /* interpret the result */
+    lower = tolower (user_input);
+    if (lower == 'n')
+        return EXIT_FAILURE;
+
+    return EXIT_SUCCESS;
 }
 
 

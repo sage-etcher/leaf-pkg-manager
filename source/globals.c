@@ -67,11 +67,19 @@ int    g_version_flag            = 0;
 char **g_arguments               = NULL;
 size_t g_arguments_len           = 0;
 
+/* default search strig for list */
+const char *LIST_DEFAULT_SEARCH_STRING = ".*";
+
 /* error logging strings constants */
 err_msg WARNING_CANNOT_LOG_TO_FILE = "WARNING: cannot log to file\n";
-err_msg ERROR_NO_CONFIG_FILE = "ERROR: cannot find config file\n";
-err_msg ERROR_PARSING_TOML   = "ERROR: cannot parse TOML\n";
+err_msg ERROR_NO_CONFIG_FILE       = "ERROR: cannot find config file\n";
+err_msg ERROR_PARSING_TOML         = "ERROR: cannot parse TOML\n";
 
+/* prompt messages */
+const char *CONFIRM_INSTALL   = "You are about to install the following packages.";
+const char *CONFIRM_UNINSTALL = "You are about to uninstall the following packages.";
+const char *CONFIRM_DELETE    = "You are about to permanently remove the following packages.";
+const char *CONFIRM_RMALIAS   = "You are about to remove the following package aliases.";
 
 
 

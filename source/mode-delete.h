@@ -1,8 +1,8 @@
 /* 
  * This source file is a part of the Leaf Package Manager.
  *
- * /source/conargs.h
- * Contains prototypes and includes for code defined in '/source/conargs.c'.
+ * /source/mode-delete.h
+ * Contains prototypes and includes for code defined in '/source/mode-delete.c'.
  *
  */
 
@@ -32,17 +32,15 @@
 
 /* run once */
 #pragma once
-#ifndef __PKG_CONARGS_HEADER__
-#define __PKG_CONARGS_HEADER__
+#ifndef __PKG_MODE_DELETE_HEADER__
+#define __PKG_MODE_DELETE_HEADER__
 
-#include <stdlib.h>
-#include <getopt.h>
 
 #include "globals.h"
 
 
 /* function prototypes */
-void conarg_settings (int argc, char **argv);
+int delete_package (char *package_name);
 
 
 #endif /* run once */
