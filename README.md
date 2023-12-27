@@ -55,7 +55,7 @@ log_file = "/var/log/pkg.log"
 
 ## License
 
-Copyright 2023 Sage I. Hendricks  
+Copyright 2023-2024 Sage I. Hendricks  
 
 Licensed under the Apache License, Version 2.0 (the "License");  
 you may not use this file except in compliance with the License.  

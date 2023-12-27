@@ -1,5 +1,6 @@
 # 
 #  This file is a part of the Leaf Package Manager.
+#  https://github.com/sage-etcher/leaf-pkg-manager
 # 
 #  /resources/config.toml
 #  The standard config file for the package manager to use.
@@ -7,7 +8,7 @@
 #  
 #
 #  
-#  Copyright 2023 Sage I. Hendricks
+#  Copyright 2023-2024 Sage I. Hendricks
 # 
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -34,7 +35,7 @@
 # Default configuration for the Leaf Package Manager, created by make
 #
 # Author: Sage I. Hendricks
-# Last Revision: December 21st, 2023
+# Last Revision: December 27st, 2023
 #
 
 [general]

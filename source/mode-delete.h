@@ -1,5 +1,6 @@
 /* 
  * This source file is a part of the Leaf Package Manager.
+ * https://github.com/sage-etcher/leaf-pkg-manager
  *
  * /source/mode-delete.h
  * Contains prototypes and includes for code defined in '/source/mode-delete.c'.
@@ -7,7 +8,7 @@
  */
 
 /* 
- * Copyright 2023 Sage I. Hendricks
+ * Copyright 2023-2024 Sage I. Hendricks
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
