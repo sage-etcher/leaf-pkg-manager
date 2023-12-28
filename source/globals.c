@@ -151,7 +151,6 @@ const char *LIST_DEFAULT_SEARCH_STRING = ".*";
 
 /* error logging strings constants */
 err_msg WARNING_CANNOT_LOG_TO_FILE = "WARNING: cannot log to file\n";
-err_msg ERROR_NO_HELP_FILE         = "ERROR: cannot find the help documentation file\n";
 err_msg ERROR_NO_CONFIG_FILE       = "ERROR: cannot find config file\n";
 err_msg ERROR_PARSING_TOML         = "ERROR: cannot parse TOML\n";
 
