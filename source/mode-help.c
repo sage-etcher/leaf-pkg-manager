@@ -2,8 +2,8 @@
  * This source file is a part of the Leaf Package Manager.
  * https://github.com/sage-etcher/leaf-pkg-manager
  *
- * /source/instruction.h
- * Contains prototypes and includes for code defined in '/source/instruction.c'.
+ * /source/mode-help.c
+ * Contains function(s) needed to print the help message.
  *
  */
 
@@ -31,25 +31,25 @@
  */
 
 
-/* run once */
-#pragma once
-#ifndef __PKG_INSTRUCTION_HEADER__
-#define __PKG_INSTRUCTION_HEADER__
+#include "mode-help.h"
 
+#include <stdio.h>
 
-#include "globals.h"
+#include "fileio.h"
 #include "log.h"
-
-#include "debug.h"
-#include <assert.h>
+#include "globals.h"
 
 
-/* function prototypes */
-void inst_execute (int mode);
-int  message_redirect (int run_mode);
+void
+help_message (void)
+{
+    /* print the help message to stdout */
+    puts (HELP_MESSAGE);
+    fflush (stdout);
 
-
-#endif /* run once */
+    /* exit function */
+    return;
+}
 
 
 /* end of file */

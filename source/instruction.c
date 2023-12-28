@@ -38,6 +38,8 @@
 #include "globals.h"
 #include "log.h"
 
+#include "mode-help.h"
+#include "mode-version.h"
 #include "mode-list.h"
 #include "mode-alias.h"
 #include "mode-create.h"
@@ -100,6 +102,24 @@ inst_execute (int mode)
     }
 
     return;
+}
+
+
+int
+message_redirect (int run_mode)
+{
+    /* if the mode is not set to HELP or VERSION, exit early */
+    if ((run_mode & (MODE_HELP_MSG | MODE_VERSION_MSG)) == 0)
+        return 0;
+
+    /* otherwise, call the associated functions */
+    if (run_mode == MODE_HELP_MSG)
+        help_message ();
+
+    else if (run_mode == MODE_VERSION_MSG)
+        version_message ();
+
+    return 1;
 }
 
 

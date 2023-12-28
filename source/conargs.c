@@ -131,18 +131,22 @@ conarg_settings (int argc, char **argv)
                 break;
 
             case 'h': /* help */
-                g_help_flag = 1;
-                break;
+                g_run_mode = MODE_HELP_MSG;
+                /* stop checking for arguments */
+                return;
 
             case 'V': /* version */
-                g_version_flag = 1;
-                break;
+                g_run_mode = MODE_VERSION_MSG;
+                /* stop checking for arguments */
+                return;
 
             case '?': /* unrecognized command */
                 /* getopt_long already threw an error message */
-                break;
+                g_run_mode = MODE_HELP_MSG;     /* print help message */
+                /* stop checking for arguments */
+                return;
 
-            default: /* AHHHHH */
+            default: /* AHHHHH code mistake */
                 abort ();
         }
     }

@@ -42,7 +42,8 @@ PKG_EXEC := pkg
 PKG_FILENAMES := debug.c globals.c string-ext.c fileio.c log.c conargs.c \
 				 config.c mode-alias.c mode-create.c mode-delete.c \
 				 mode-install.c mode-list.c mode-remove-alias.c \
-				 mode-uninstall.c instruction.c pkg.c
+				 mode-uninstall.c mode-help.c mode-version.c instruction.c \
+				 pkg.c
 PKG_SOURCE_FILES := $(foreach filename,$(PKG_FILENAMES),$(SOURCE_DIR)/$(filename))
 PKG_OBJECT_FILES := $(foreach filename,$(PKG_FILENAMES),$(BUILD_DIR)/$(filename).o)
 
@@ -52,7 +53,9 @@ CC := clang
 TOML_L_FLAGS := -L/usr/local/lib -ltoml
 TOML_C_FLAGS :=
 
-L_FLAGS :=$(TOML_L_FLAGS)
+RELEASE_L_FLAGS := -s
+L_FLAGS := $(TOML_L_FLAGS)
+L_FLAGS += $(RELEASE_L_FLAGS)
 
 DEBUG_C_FLAGS := -O0 -g
 RELEASE_C_FLAGS := -O3
@@ -67,8 +70,8 @@ C_FLAGS += -Wno-format-pedantic
 #C_FLAGS += -Wno-unused-function
 C_FLAGS += -Wno-unused-label
 #C_FLAGS += -Wno-unused-variable
-#C_FLAGS += $(RELEASE_C_FLAGS)
-C_FLAGS += $(DEBUG_C_FLAGS)
+C_FLAGS += $(RELEASE_C_FLAGS)
+#C_FLAGS += $(DEBUG_C_FLAGS)
 
 
 .PHONY: build

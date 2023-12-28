@@ -38,6 +38,9 @@
 
 #include <malloc.h>
 
+/* help+version message information */
+extern const char *VERSION_MESSAGE;
+extern const char *HELP_MESSAGE;
 
 /* config file */
 extern const char *XDG_CONFIG_FILE;
@@ -62,13 +65,15 @@ extern char *g_config_log_file;
 
 /* console parameter variables/flags */
 typedef enum {
-    MODE_INSTALL,
-    MODE_UNINSTALL,
-    MODE_CREATE,
-    MODE_DELETE,
-    MODE_ALIAS,
-    MODE_REMOVE_ALIAS,
-    MODE_LIST
+    MODE_INSTALL      = 0x1,   /* bit 1 */
+    MODE_UNINSTALL    = 0x2,   /* bit 2 */
+    MODE_CREATE       = 0x4,   /* bit 3 */
+    MODE_DELETE       = 0x8,   /* bit 4 */
+    MODE_ALIAS        = 0x10,  /* bit 5 */
+    MODE_REMOVE_ALIAS = 0x20,  /* bit 6 */
+    MODE_LIST         = 0x40,  /* bit 7 */
+    MODE_HELP_MSG     = 0x80,  /* bit 8 */
+    MODE_VERSION_MSG  = 0x100  /* bit 9 */
 } mode;
 /* mode required arguments */
 #define ARGC_MIN_INSTALL   1
@@ -103,6 +108,7 @@ extern size_t g_arguments_len;
 typedef const char * err_msg;
 
 extern err_msg WARNING_CANNOT_LOG_TO_FILE;
+extern err_msg ERROR_NO_HELP_FILE;
 extern err_msg ERROR_NO_CONFIG_FILE;
 extern err_msg ERROR_PARSING_TOML;
 

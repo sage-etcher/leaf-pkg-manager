@@ -2,8 +2,8 @@
  * This source file is a part of the Leaf Package Manager.
  * https://github.com/sage-etcher/leaf-pkg-manager
  *
- * /source/instruction.h
- * Contains prototypes and includes for code defined in '/source/instruction.c'.
+ * /source/mode-version.h
+ * Contains prototypes and includes for code defined in '/source/mode-version.c'.
  *
  */
 
@@ -33,20 +33,16 @@
 
 /* run once */
 #pragma once
-#ifndef __PKG_INSTRUCTION_HEADER__
-#define __PKG_INSTRUCTION_HEADER__
+#ifndef __PKG_MODE_VERSION_HEADER__
+#define __PKG_MODE_VERSION_HEADER__
 
+#include <stdio.h>
 
 #include "globals.h"
-#include "log.h"
-
-#include "debug.h"
-#include <assert.h>
 
 
 /* function prototypes */
-void inst_execute (int mode);
-int  message_redirect (int run_mode);
+void version_message (void);
 
 
 #endif /* run once */

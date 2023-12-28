@@ -39,17 +39,24 @@
 #include "config.h"
 #include "instruction.h"
 #include "globals.h"
+
+
 /* static-function prototypes */
+
 
 /* main entry point */
 int
 main (int argc, char **argv)
 {
     conarg_settings (argc, argv);   /* get console parameters */
+    if (message_redirect (g_run_mode))
+        goto main_exit_0;
+
     conf_source ();                 /* source the config file */
 
     inst_execute (g_run_mode);      /* do the stuff indicated by the mode */
 
+main_exit_0:
     /* free allocated global variables and tidy up a bit */
     global_cleanup();
     /* exit */
